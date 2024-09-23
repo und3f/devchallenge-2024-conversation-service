@@ -44,6 +44,7 @@ services:
       - POSTGRES_PWD=mysecretpassword
 
   tests:
+    container_name: tests_123_devchalange_24
     build:
       context: ./tests
     depends_on:

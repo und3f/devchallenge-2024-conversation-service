@@ -1,0 +1,26 @@
+services:
+
+  redis:
+    image: "redis:alpine"
+    attach: false
+    volumes:
+      - ./db/redis:/var/lib/redis/data
+
+  web:
+    build:
+      context: ./
+      target: production
+    ports:
+      - '8080:8080'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_ADDR=redis:6379
+
+  tests:
+    build:
+      context: ./tests
+    depends_on:
+      - web
+    environment:
+      - SERVICE_URL=http://web:8080

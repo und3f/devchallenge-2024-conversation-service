@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"log"
+	"slices"
+	"strings"
 )
 
 type Category struct {
@@ -178,6 +180,7 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 		newCategoryValue.Points = make([]string, 0)
 	}
 
+	slices.SortFunc(newCategoryValue.Points, strings.Compare)
 	return &newCategoryValue, nil
 }
 

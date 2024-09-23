@@ -3,7 +3,7 @@ services:
   postgres:
     image: "postgres:alpine"
     attach: false
-    container_name: postgres_123_devchalagne_24
+    container_name: postgres_123_devchalange_24
     volumes:
       - ./.db/postgres:/var/lib/postgresql/data
     environment:
@@ -18,7 +18,7 @@ services:
   migrations:
     image: 'liquibase/liquibase'
     attach: true
-    container_name: migrations_123_devchalagne_24
+    container_name: migrations_123_devchalange_24
     volumes:
       - ./migrations/:/liquibase/changelog/:ro
     command: --defaults-file=/liquibase/changelog/liquibase.properties update
@@ -27,7 +27,7 @@ services:
         condition: service_started
 
   web:
-    container_name: web_123_devchalagne_24
+    container_name: web_123_devchalange_24
     build:
       context: ./
       target: production

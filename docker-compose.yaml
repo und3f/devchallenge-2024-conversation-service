@@ -1,11 +1,5 @@
 services:
 
-  redis:
-    image: "redis:alpine"
-    attach: false
-    volumes:
-      - ./.db/redis:/var/lib/redis/data
-
   postgres:
     image: "postgres:alpine"
     attach: false
@@ -39,7 +33,6 @@ services:
         condition: service_completed_successfully
 
     environment:
-      - REDIS_ADDR=redis:6379
       - POSTGRES_URL=postgresql://postgres:mysecretpassword@postgres:5432/postgres?sslmode=allow&search_path=public
       - POSTGRES_PWD=mysecretpassword
 

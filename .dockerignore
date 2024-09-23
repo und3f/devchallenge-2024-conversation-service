@@ -1,2 +1,4 @@
-./db
-./tests
+/db
+/tests
+docker-compose.yml
+/migrations

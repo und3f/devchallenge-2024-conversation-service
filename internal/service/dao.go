@@ -1,15 +1,20 @@
 package service
 
 import (
+	"context"
 	"os"
 
 	"devchallenge.it/conversation/internal/model"
-	"github.com/redis/go-redis/v9"
 )
 
 func NewDao() *model.Dao {
-	redisAddr := os.Getenv("REDIS_ADDR")
 
-	rdb := redis.NewClient(&redis.Options{Addr: redisAddr})
+	conn, err := pgx.Connect(context.Background())
 	return model.NewDao(rdb)
+}
+
+func ConnectPostgres(ctx context.Context) {
+	pgUrl := os.Getenv("POSTGRES_URL")
+
+	conn, err := pgx.Connect(ctx, pgx.ParseConfig(pgUrl))
 }

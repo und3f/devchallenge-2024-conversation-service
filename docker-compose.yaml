@@ -4,7 +4,27 @@ services:
     image: "redis:alpine"
     attach: false
     volumes:
-      - ./db/redis:/var/lib/redis/data
+      - ./.db/redis:/var/lib/redis/data
+
+  postgres:
+    image: "postgres:alpine"
+    attach: false
+    volumes:
+      - ./.db/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - 5432:5432
+
+  migrations:
+    image: 'liquibase/liquibase'
+    attach: true
+    volumes:
+      - ./migrations/:/liquibase/changelog/:ro
+    command: --defaults-file=/liquibase/changelog/liquibase.properties update
+    depends_on:
+      postgres:
+        condition: service_started
 
   web:
     build:
@@ -13,9 +33,15 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - redis
+      postgres:
+        condition: service_started
+      migrations:
+        condition: service_completed_successfully
+
     environment:
       - REDIS_ADDR=redis:6379
+      - POSTGRES_URL=jdbc:postgresql://postgres:5432/postgres?currentSchema=public
+      - POSTGRES_PWD=mysecretpassword
 
   tests:
     build:

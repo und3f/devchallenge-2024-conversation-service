@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"log"
 )
 
 type Category struct {
@@ -11,7 +12,7 @@ type Category struct {
 }
 
 func (d *Dao) ListCategories() ([]Category, error) {
-	var categories []Category
+	categories := make([]Category, 0)
 
 	rows, err := d.pg.Query(
 		context.Background(),
@@ -87,21 +88,29 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 		return
 	}
 
-	for _, point := range createReq.Points {
-		pointId, err := d.CreateOrGetPoint(point)
-
-		if err != nil {
-			return category, err
-		}
-		if err := d.AddCategoryPoint(id, pointId); err != nil {
-			return category, err
-		}
+	if err = d.BindCategoryPoints(id, createReq.Points); err != nil {
+		return
 	}
 
 	category = createReq
 	category.Id = id
 
 	return category, nil
+}
+
+func (d *Dao) BindCategoryPoints(category_id int32, points []string) error {
+	for _, point := range points {
+		pointId, err := d.CreateOrGetPoint(point)
+		if err != nil {
+			return err
+		}
+
+		if err := d.AddCategoryPoint(category_id, pointId); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (d *Dao) CreateOrGetPoint(text string) (id int32, err error) {
@@ -132,6 +141,40 @@ func (d *Dao) AddCategoryPoint(categoryId int32, pointId int32) (err error) {
 		categoryId, pointId,
 	)
 	return
+}
+
+func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err error) {
+	cmd, err := d.pg.Exec(
+		context.Background(),
+		"UPDATE categories SET title = $2 WHERE id = $1",
+		newCategoryValue.Id,
+		newCategoryValue.Title,
+	)
+
+	if err != nil {
+		return
+	}
+
+	if cmd.RowsAffected() == 0 {
+		log.Printf("UpdateCategory %d category not found.", category.Id)
+		return
+	}
+
+	_, err = d.pg.Exec(
+		context.Background(),
+		"DELETE FROM category_points WHERE category_id = $1",
+		newCategoryValue.Id,
+	)
+	if err != nil {
+		return
+	}
+
+	err = d.BindCategoryPoints(newCategoryValue.Id, newCategoryValue.Points)
+	if err != nil {
+		return
+	}
+
+	return &newCategoryValue, nil
 }
 
 func (d *Dao) DeleteCategory(categoryId int32) (deleted bool, err error) {

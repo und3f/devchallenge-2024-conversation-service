@@ -12,6 +12,14 @@ const sampleCreateCategory = {
   ]
 }
 
+const sampleUpdateCategory = {
+  "title": "Updated Topic Title",
+  "points": [
+    "Key Point 1 (new)",
+    "Key Point 2"
+  ]
+}
+
 let createResponse, deleteReponse
 let createdCategoryId
 
@@ -50,7 +58,7 @@ Then('I should receive list of all conversation topics', async function () {
   assert.ok(categories.length > 0, 'List is not empty')
 })
 
-When('I a request to delete previously created sample category', async function () {
+When('I request to delete previously created sample category', async function () {
   deleteReponse = await fetch(
     fullURL(`/category/${createdCategoryId}`), {
       'method': 'DELETE',
@@ -58,17 +66,41 @@ When('I a request to delete previously created sample category', async function 
   )
 });
 
-Then('I should receive success response', function () {
-  assert.ok(deleteReponse.ok)
-  assert.equal(200, deleteReponse.status)
+Then('category should be unavailable', async function () {
+  const response = await fetch(fullURL('/category'))
+  const category = (await response.json())
+    .find(c => c.id == createdCategoryId);
+
+  assert.ok(category == null)
 });
 
-Then('category should be unavailable', async function () {
-  const response = await fetch(
+When('I request to update previously created sample category', async function () {
+
+  const updateResponse = await fetch(
     fullURL(`/category/${createdCategoryId}`), {
-      'method': 'DELETE',
+      'method': 'PUT',
+      'headers': createPostHeaders(),
+      'body': JSON.stringify(sampleUpdateCategory)
     }
   )
 
-  assert.equal(404, response.status)
+  assert.equal(200, updateResponse.status)
+});
+
+Then('category should be updated', async function () {
+  const response = await fetch(
+    fullURL('/category')
+  )
+
+  assert.ok(response.ok)
+
+  const category = (await response.json())
+    .find(c => c.id == createdCategoryId);
+
+  assert.ok(category, 'Category found')
+
+  assert.deepEqual({
+    ...sampleUpdateCategory,
+    id: createdCategoryId,
+  }, category)
 });

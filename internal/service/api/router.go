@@ -18,6 +18,10 @@ func (c *Controller) Mount(rootRouter *mux.Router) *mux.Router {
 	}).Methods("POST")
 
 	r.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		c.UpdateCategory(w, r)
+	}).Methods("PUT")
+
+	r.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
 		c.DeleteCategory(w, r)
 	}).Methods("DELETE")
 

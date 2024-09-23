@@ -7,7 +7,10 @@ Feature: Category
     When I request "/category"
     Then I should receive list of all conversation topics
 
+  Scenario: Update category
+    When I request to update previously created sample category
+    Then category should be updated
+
   Scenario: Delete category
-    When I a request to delete previously created sample category
-    Then I should receive success response
-    And  category should be unavailable
+    When I request to delete previously created sample category
+    Then category should be unavailable

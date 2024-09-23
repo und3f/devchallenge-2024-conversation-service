@@ -17,5 +17,9 @@ func (c *Controller) Mount(rootRouter *mux.Router) *mux.Router {
 		c.CreateCategory(w, r)
 	}).Methods("POST")
 
+	r.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		c.DeleteCategory(w, r)
+	}).Methods("DELETE")
+
 	return r
 }

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"devchallenge.it/conversation/internal/model"
-	"github.com/go-redis/redismock/v9"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +14,6 @@ type TestContext struct {
 	service *Service
 	router  *mux.Router
 	dao     *model.Dao
-	mock    redismock.ClientMock
 }
 
 func NewTestContext() *TestContext {
@@ -35,11 +33,6 @@ func NewTestContext() *TestContext {
 func TestGetRoot(t *testing.T) {
 	t.Skip("Not implemented")
 	tctx := NewTestContext()
-
-	/*
-		Create expected redis	requests
-		tctx.mock.ExpectHGet("devchallenge-xx", "var1").SetVal("1")
-	*/
 
 	request, _ := http.NewRequest(http.MethodGet, "/", nil)
 	response := httptest.NewRecorder()

@@ -14,8 +14,12 @@ CREATE TABLE categories (
 
 --changeset V1_Init:createCategoryPoints
 CREATE TABLE category_points (
-  category_id INT REFERENCES points(id),
-  point_id INT REFERENCES categories(id)
+  category_id INT
+    REFERENCES categories(id)
+    ON DELETE CASCADE,
+  point_id INT
+    REFERENCES points(id)
+    ON DELETE CASCADE
 );
 
 --changeset V1_Init:createCalls
@@ -29,7 +33,11 @@ CREATE TABLE calls (
 
 --changeset V1_Init:createCallCategories
 CREATE TABLE call_categories (
-  call_id     INT REFERENCES calls(id),
-  catogory_id INT REFERENCES categories(id)
+  call_id     INT
+    REFERENCES calls(id)
+    ON DELETE CASCADE,
+  catogory_id INT
+    REFERENCES categories(id)
+    ON DELETE CASCADE
 );
 

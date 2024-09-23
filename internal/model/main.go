@@ -3,16 +3,16 @@ package model
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Dao struct {
-	pgConn *pgx.Conn
+	pg *pgxpool.Pool
 }
 
-func NewDao(pgConn *pgx.Conn) *Dao {
+func NewDao(pgPool *pgxpool.Pool) *Dao {
 	return &Dao{
-		pgConn: pgConn,
+		pg: pgPool,
 	}
 }
 

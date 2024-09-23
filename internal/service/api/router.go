@@ -6,6 +6,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	PATH_PREFIX = "/category"
+)
+
 func (c *Controller) Mount(rootRouter *mux.Router) *mux.Router {
 	r := rootRouter.PathPrefix(PATH_PREFIX).Subrouter()
 

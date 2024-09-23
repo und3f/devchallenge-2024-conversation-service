@@ -5,10 +5,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	PATH_PREFIX = "/category"
-)
-
 func Mount(r *mux.Router, dao *model.Dao) {
 	c := &Controller{dao: dao}
 	c.Mount(r)

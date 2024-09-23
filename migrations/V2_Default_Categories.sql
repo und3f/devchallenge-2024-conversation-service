@@ -62,11 +62,11 @@ INSERT INTO points(text) VALUES('Economic Cooperation');
 INSERT INTO category_points(category_id, point_id)
 VALUES
   (
-    (SELECT id FROM categories WHERE title = 'Trade'),
-    (SELECT id FROM points WHERE text = 'Trade and Economic Cooperation')
+    (SELECT id FROM categories WHERE title = 'Trade and Economic Cooperation' ),
+    (SELECT id FROM points WHERE text = 'Trade')
   ),
   (
-    (SELECT id FROM categories WHERE title = 'Economic Cooperation'),
-    (SELECT id FROM points WHERE text = 'Trade and Economic Cooperation')
+    (SELECT id FROM categories WHERE title = 'Trade and Economic Cooperation' ),
+    (SELECT id FROM points WHERE text = 'Economic Cooperation')
   )
   

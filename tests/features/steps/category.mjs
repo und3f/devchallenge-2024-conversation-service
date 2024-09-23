@@ -33,7 +33,7 @@ function createPostHeaders() {
 
 When('I make a request to create sample category', async function () {
   createResponse = await fetch(
-    fullURL('/category'), {
+    fullURL('/api/category'), {
       'method': 'POST',
       'headers': createPostHeaders(),
       'body': JSON.stringify(sampleCreateCategory)
@@ -70,20 +70,22 @@ Then('I should see default conversation topics', async function () {
   ]
 
   for (const expected of expectedCategories) {
-    assert.ok(categories.find(c => c.title == expected), `Category "${expected}" found.`)
+    const category = categories.find(c => c.title == expected)
+    assert.ok(category, `Category "${expected}" found.`)
+    assert.ok(category.points.length > 0, 'Category contains points.')
   }
 });
 
 When('I request to delete previously created sample category', async function () {
   deleteReponse = await fetch(
-    fullURL(`/category/${createdCategoryId}`), {
+    fullURL(`/api/category/${createdCategoryId}`), {
       'method': 'DELETE',
     }
   )
 });
 
 Then('category should be unavailable', async function () {
-  const response = await fetch(fullURL('/category'))
+  const response = await fetch(fullURL('/api/category'))
   const category = (await response.json())
     .find(c => c.id == createdCategoryId);
 
@@ -93,7 +95,7 @@ Then('category should be unavailable', async function () {
 When('I request to update previously created sample category', async function () {
 
   const updateResponse = await fetch(
-    fullURL(`/category/${createdCategoryId}`), {
+    fullURL(`/api/category/${createdCategoryId}`), {
       'method': 'PUT',
       'headers': createPostHeaders(),
       'body': JSON.stringify(sampleUpdateCategory)
@@ -105,7 +107,7 @@ When('I request to update previously created sample category', async function ()
 
 Then('category should be updated', async function () {
   const response = await fetch(
-    fullURL('/category')
+    fullURL('/api/category')
   )
 
   assert.ok(response.ok)

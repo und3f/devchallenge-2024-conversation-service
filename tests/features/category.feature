@@ -4,7 +4,7 @@ Feature: Category
     Then I should receive category created success response
 
   Scenario: List categories
-    When I request "/category"
+    When I request "/api/category"
     Then I should receive list of all conversation topics
     And  I should see default conversation topics
 

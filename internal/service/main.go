@@ -22,7 +22,7 @@ func New(router *mux.Router, dao *model.Dao) *Service {
 		http.ServeFile(w, r, "README.md")
 	})
 
-	api.New(router, dao)
+	api.Mount(router, dao)
 
 	return &Service{
 		wrapWithMiddleware(router),

@@ -1,4 +1,4 @@
-ARG SERVICE=spreadsheet-backend
+ARG SERVICE=conversation-backend
 
 FROM golang:1.23.1-alpine AS base
 
@@ -16,7 +16,7 @@ FROM source AS test
 RUN ["go", "test", "-cover", "-v", "./..."]
 
 # Build executable
-FROM test AS build
+FROM source AS build
 ARG SERVICE
 
 RUN go build -v -o /usr/local/bin/${SERVICE} ./cmd/service/main.go
@@ -31,4 +31,4 @@ EXPOSE 8080
 COPY --from=build /usr/local/bin/${SERVICE} /usr/local/bin/${SERVICE}
 COPY --from=source /usr/src/app/README.md README.md
 
-CMD ["spreadsheet-backend"]
+CMD ["conversation-backend"]

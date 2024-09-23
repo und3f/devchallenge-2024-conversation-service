@@ -21,8 +21,7 @@ type TestContext struct {
 func NewTestContext() *TestContext {
 	r := mux.NewRouter()
 
-	rdb, mock := redismock.NewClientMock()
-	dao := model.NewDao(rdb)
+	dao := model.NewDao(nil)
 
 	service := New(r, dao)
 
@@ -30,7 +29,6 @@ func NewTestContext() *TestContext {
 		service: service,
 		router:  r,
 		dao:     dao,
-		mock:    mock,
 	}
 }
 

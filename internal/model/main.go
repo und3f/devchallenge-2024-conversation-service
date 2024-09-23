@@ -3,16 +3,16 @@ package model
 import (
 	"context"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/jackc/pgx/v5"
 )
 
 type Dao struct {
-	rdb *redis.Client
+	pgConn *pgx.Conn
 }
 
-func NewDao(rdb *redis.Client) *Dao {
+func NewDao(pgConn *pgx.Conn) *Dao {
 	return &Dao{
-		rdb: rdb,
+		pgConn: pgConn,
 	}
 }
 

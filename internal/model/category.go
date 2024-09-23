@@ -8,9 +8,9 @@ import (
 )
 
 type Category struct {
-	Id     int32    `json:"id",omitifempty`
+	Id     int32    `json:"id"`
 	Title  string   `json:"title"`
-	Points []string `json:"points"`
+	Points []string `json:"points",omitifempty`
 }
 
 func (d *Dao) ListCategories() ([]Category, error) {
@@ -47,7 +47,7 @@ func (d *Dao) ListCategories() ([]Category, error) {
 }
 
 func (d *Dao) GetCategoryPoints(id int32) ([]string, error) {
-	points := make([]string, 0)
+	points := []string{}
 
 	rows, err := d.pg.Query(
 		context.Background(),
@@ -74,6 +74,8 @@ WHERE
 		text := values[0].(string)
 		points = append(points, text)
 	}
+
+	slices.SortFunc(points, strings.Compare)
 
 	return points, nil
 }
@@ -146,20 +148,32 @@ func (d *Dao) AddCategoryPoint(categoryId int32, pointId int32) (err error) {
 }
 
 func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err error) {
-	cmd, err := d.pg.Exec(
-		context.Background(),
-		"UPDATE categories SET title = $2 WHERE id = $1",
-		newCategoryValue.Id,
-		newCategoryValue.Title,
-	)
+	if len(newCategoryValue.Title) > 0 {
+		cmd, err := d.pg.Exec(
+			context.Background(),
+			"UPDATE categories SET title = $2 WHERE id = $1",
+			newCategoryValue.Id,
+			newCategoryValue.Title,
+		)
 
-	if err != nil {
-		return
-	}
+		if err != nil {
+			return nil, err
+		}
 
-	if cmd.RowsAffected() == 0 {
-		log.Printf("UpdateCategory %d category not found.", category.Id)
-		return
+		if cmd.RowsAffected() == 0 {
+			log.Printf("UpdateCategory %d category not found.", category.Id)
+			return nil, nil
+		}
+	} else {
+		err := d.pg.QueryRow(
+			context.Background(),
+			"SELECT title FROM categories WHERE id = $1",
+			newCategoryValue.Id,
+		).Scan(&newCategoryValue.Title)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	_, err = d.pg.Exec(

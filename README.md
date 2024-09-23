@@ -27,12 +27,27 @@ docker compose up --build
 
 ## REST operations
 
-```
-# Get the README
-curl -X POST localhost:8080/
+### /category ENDPOINT
 
-# Get the API root
-curl -X POST localhost:8080/v1/api
+Categories represent the topics of conversation. Each conversation may cover
+multiple topics simultaneously. The conversation topics must be assigned
+correctly, as specialists will evaluate and assess the quality of the calls
+based on these topics from their respective fields.
+
+When adding or updating a category, it is necessary to check if the conversations still belong to this category.
+
+GET /category – Returns a list of all conversation topics.
+
+POST /category – Creates a new conversation topic.
+
+PUT /category/{category_id} – Updates an existing conversation topic.
+
+DELETE /category/{category_id} – Deletes a conversation topic by the specified identifier.
+
+Validation Rules:
+
+    title is required for POST, optional for PUT.
+    points must be an array of strings if provided.
 
 ## Corner cases
 

@@ -8,7 +8,7 @@ import (
 type Category struct {
 	Id     int32    `json:"id",omitifempty`
 	Title  string   `json:"title"`
-	Points []string `json:"points",omitifempty`
+	Points []string `json:"points"`
 }
 
 func (d *Dao) ListCategories() ([]Category, error) {
@@ -45,7 +45,7 @@ func (d *Dao) ListCategories() ([]Category, error) {
 }
 
 func (d *Dao) GetCategoryPoints(id int32) ([]string, error) {
-	var points []string
+	points := make([]string, 0)
 
 	rows, err := d.pg.Query(
 		context.Background(),
@@ -169,9 +169,13 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 		return
 	}
 
-	err = d.BindCategoryPoints(newCategoryValue.Id, newCategoryValue.Points)
-	if err != nil {
-		return
+	if len(newCategoryValue.Points) > 0 {
+		err = d.BindCategoryPoints(newCategoryValue.Id, newCategoryValue.Points)
+		if err != nil {
+			return
+		}
+	} else {
+		newCategoryValue.Points = make([]string, 0)
 	}
 
 	return &newCategoryValue, nil

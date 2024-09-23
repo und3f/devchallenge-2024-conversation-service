@@ -10,5 +10,6 @@
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <include file="V1_Init.sql" />
+    <include file="V2_Default_Categories.sql" />
 
 </databaseChangeLog>

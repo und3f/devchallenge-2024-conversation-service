@@ -22,6 +22,7 @@ const sampleUpdateCategory = {
 
 let createResponse, deleteReponse
 let createdCategoryId
+let categories
 
 function createPostHeaders() {
   const h = new Headers();
@@ -54,9 +55,24 @@ Then('I should receive list of all conversation topics', async function () {
   const response = getResponse
   assert.equal(200, response.status)
 
-  const categories = await response.json()
+  categories = await response.json()
   assert.ok(categories.length > 0, 'List is not empty')
 })
+
+
+Then('I should see default conversation topics', async function () {
+  const expectedCategories = [
+    "Visa and Passport Services",
+    "Diplomatic Inquiries",
+    "Travel Advisories",
+    "Consular Assistance",
+    "Trade and Economic Cooperation"
+  ]
+
+  for (const expected of expectedCategories) {
+    assert.ok(categories.find(c => c.title == expected), `Category "${expected}" found.`)
+  }
+});
 
 When('I request to delete previously created sample category', async function () {
   deleteReponse = await fetch(

@@ -6,6 +6,7 @@ Feature: Category
   Scenario: List categories
     When I request "/category"
     Then I should receive list of all conversation topics
+    And  I should see default conversation topics
 
   Scenario: Update category
     When I request to update previously created sample category

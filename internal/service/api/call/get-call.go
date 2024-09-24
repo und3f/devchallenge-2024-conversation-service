@@ -43,6 +43,14 @@ func (c *Controller) GetCall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if call.ProcessError != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(struct {
+			Error string `json:"error"`
+		}{Error: *call.ProcessError})
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)
 }

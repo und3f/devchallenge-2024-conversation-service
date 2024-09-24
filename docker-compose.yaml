@@ -26,6 +26,16 @@ services:
       postgres:
         condition: service_started
 
+  whisper:
+    container_name: whisper_123_devchalange_24
+    build:
+      context: ./contrib/whisper.cpp
+      dockerfile: ../../whisper.Dockerfile
+    ports:
+      - '8081:8081'
+    volumes:
+      - ./contrib/whisper.cpp/models/:/models
+
   web:
     container_name: web_123_devchalange_24
     build:
@@ -38,7 +48,8 @@ services:
         condition: service_started
       migrations:
         condition: service_completed_successfully
-
+      whisper:
+        condition: service_started
     environment:
       - POSTGRES_URL=postgresql://postgres:mysecretpassword@postgres:5432/postgres?sslmode=allow&search_path=public
       - POSTGRES_PWD=mysecretpassword

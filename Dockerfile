@@ -26,7 +26,7 @@ FROM base AS production
 ARG SERVICE
 
 ENV REDIS_ADDR="localhost:6379"
-EXPOSE 8080
+EXPOSE 8081
 
 COPY --from=build /usr/local/bin/${SERVICE} /usr/local/bin/${SERVICE}
 COPY --from=source /usr/src/app/README.md README.md

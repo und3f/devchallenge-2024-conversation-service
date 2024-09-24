@@ -22,8 +22,6 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-
 	callId, err := c.dao.CreateCall(callCreate.AudioUrl)
 	if err != nil {
 		log.Print(err)
@@ -35,6 +33,6 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		Id: callId,
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)
 }

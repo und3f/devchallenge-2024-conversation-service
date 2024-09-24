@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset V2_Default_Categories:createCategories
+--changeset V2_Default_Categories:insertCategories
 INSERT INTO categories(title)
 OVERRIDING SYSTEM VALUE
 VALUES

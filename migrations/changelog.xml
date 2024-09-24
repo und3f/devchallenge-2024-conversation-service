@@ -11,5 +11,6 @@
 
     <include file="V1_Init.sql" />
     <include file="V2_Default_Categories.sql" />
+    <include file="V3_Sample_Call.sql" />
 
 </databaseChangeLog>

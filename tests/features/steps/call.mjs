@@ -8,8 +8,8 @@ const sampleCreateCall = {
   'audio_url': 'http://example.com/audiofile.wav'
 }
 
-let createResponse
-let createdCallId
+let createResponse, getResponse
+let createdCallId, processedCallId = 1
 
 When('I make a request to create sample call', async function () {
   createResponse = await fetch(
@@ -27,18 +27,25 @@ Then('I should receive call created success response', async function () {
   assert.ok(createdCallId != null, 'Got created call id')
 });
 
-When('I make a request to get created sample call', async function () {
-  const getResponse = await fetch(fullURL(`/api/call/${createdCallId}`))
-  assert.equal(202, getResponse.status)
+Then('get call should return accepted response', async function () {
+  const response = await fetch(fullURL(`/api/call/${createdCallId}`))
+  assert.equal(202, response.status)
 });
 
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-
-Then('I wait for call process', async function () {
-  await sleep(PROCESSING_TIME)
-})
+When('I make a request to get sample processed call', async function () {
+  getResponse = await fetch(fullURL(`/api/call/${processedCallId}`))
+});
 
 Then('I should receive call processed response', async function () {
-  const getResponse = await fetch(fullURL(`/api/call/${createdCallId}`))
   assert.equal(200, getResponse.status)
+  const call = await getResponse.json()
+
+  assert.deepEqual({
+    "id": 1,
+    "name": "Sample Call",
+    "text": "TRANSCRIBED TEXT",
+    "location": "Kyiv",
+    "emotional_tone": "Neutral",
+    "categories": ['Diplomatic Inquiries', 'Visa and Passport Services']
+  }, call)
 });

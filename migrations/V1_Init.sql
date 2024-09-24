@@ -37,7 +37,7 @@ CREATE TABLE call_categories (
   call_id     INT
     REFERENCES calls(id)
     ON DELETE CASCADE,
-  catogory_id INT
+  category_id INT
     REFERENCES categories(id)
     ON DELETE CASCADE
 );

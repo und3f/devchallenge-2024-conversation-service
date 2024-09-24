@@ -11,5 +11,5 @@ When('I request {string}', async function (path) {
 Then('I should receive Readme document', async function () {
   assert.ok(response.ok)
 
-  assert.match(await response.text(), /Copyright/)
+  assert.match(await response.text(), /DEV Challenge/)
 })

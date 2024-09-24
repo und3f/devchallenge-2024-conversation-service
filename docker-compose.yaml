@@ -29,12 +29,20 @@ services:
   whisper:
     container_name: whisper_123_devchalange_24
     build:
-      context: ./contrib/whisper.cpp
-      dockerfile: ../../whisper.Dockerfile
+      context: ./services/whisper
+    stop_grace_period: 1s
     ports:
       - '8081:8081'
     volumes:
       - ./contrib/whisper.cpp/models/:/models
+
+  sentiment:
+    container_name: sentiment_123_devchalange_24
+    build:
+      context: ./services/sentiment
+    stop_grace_period: 1s
+    ports:
+      - '8082:8080'
 
   web:
     container_name: web_123_devchalange_24
@@ -52,10 +60,13 @@ services:
         condition: service_completed_successfully
       whisper:
         condition: service_started
+      sentiment:
+        condition: service_started
     environment:
       - POSTGRES_URL=postgresql://postgres:mysecretpassword@postgres:5432/postgres?sslmode=allow&search_path=public
       - POSTGRES_PWD=mysecretpassword
       - WHISPER_URL=http://whisper:8081
+      - SENTIMENT_URL=http://sentiment:8080
 
   tests:
     container_name: tests_123_devchalange_24

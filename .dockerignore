@@ -1,4 +1,6 @@
 /.db
+/.git
 /tests
-docker-compose.yml
+/docker-compose.yml
 /migrations
+/services

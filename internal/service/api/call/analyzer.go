@@ -15,6 +15,21 @@ import (
 	"devchallenge.it/conversation/internal/model"
 )
 
+type SentimentTextPayload struct {
+	Text   string            `json:"text"`
+	Probas map[string]string `json:"probas"`
+}
+
+type SentimentResp struct {
+	Output string `json:"output"`
+}
+
+var EmotionOutputToEmotionValue = map[string]string{
+	"NEG": "Negative",
+	"POS": "Positive",
+	"NEU": "Neutral",
+}
+
 func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 	c.analyzeMutex.Lock()
 	defer c.analyzeMutex.Unlock()
@@ -52,18 +67,17 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 	}
 
 	call.Text = &text
-	call.Categories, err = c.AnalyzeTextCategories(text)
+
+	emotional, err := c.RequestSentimentAnalyze(text)
 	if err != nil {
-		errStr := fmt.Sprintf("Failed to categorize audio: %s", err)
+		errStr := fmt.Sprintf("Failed to analyze emotional tone: %s", err)
 		call.ProcessError = &errStr
 		return call
 	}
 
-	return call
-}
+	call.EmotionalTone = &emotional
 
-func (c *Controller) AnalyzeTextCategories(text string) (categories []string, err error) {
-	return nil, nil
+	return call
 }
 
 func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {
@@ -93,7 +107,7 @@ func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {
 func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text string, err error) {
 	client := &http.Client{}
 
-	url, err := url.JoinPath(c.whisperUrl, "/inference")
+	url, err := url.JoinPath(c.srvConf.WhisperUrl, "/inference")
 	if err != nil {
 		return text, err
 	}
@@ -144,4 +158,38 @@ func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text strin
 	}
 
 	return strings.TrimSpace(whisperResp.Text), nil
+}
+
+func (c *Controller) RequestSentimentAnalyze(text string) (sentiment string, err error) {
+	url, err := url.JoinPath(c.srvConf.SentimentUrl, "/emotion")
+	if err != nil {
+		return sentiment, err
+	}
+
+	request := SentimentTextPayload{Text: text}
+
+	payload := new(bytes.Buffer)
+	json.NewEncoder(payload).Encode(&request)
+
+	resp, err := http.Post(url, "application/json", payload)
+	if err != nil {
+		return sentiment, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return sentiment, fmt.Errorf("Invalid response status: %s", resp.Status)
+	}
+
+	var sentimentResp SentimentResp
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&sentimentResp); err != nil {
+		return sentiment, err
+	}
+
+	emotion, ok := EmotionOutputToEmotionValue[sentimentResp.Output]
+	if !ok {
+		return sentiment, fmt.Errorf("Unexpected emotion value: %s", sentimentResp.Output)
+	}
+
+	return emotion, nil
 }

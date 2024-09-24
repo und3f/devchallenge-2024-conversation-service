@@ -20,7 +20,8 @@ type CallCreateRequest struct {
 }
 
 type WhisperResponse struct {
-	Text string `json:"text"`
+	Text  string  `json:"text"`
+	Error *string `json:"error"`
 }
 
 func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
@@ -90,8 +91,13 @@ func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {
 		return audio, err
 	}
 
-	contentType := resp.Header.Get("Content-Type")
-	if contentType != "audio/wav" {
+	contentType := strings.Split(resp.Header.Get("Content-Type"), "/")
+	fmt.Print(contentType)
+	if contentType[0] != "audio" {
+		return nil, errors.New("Not audio file provided")
+	}
+
+	if !strings.Contains(contentType[1], "wav") {
 		return nil, errors.New("Not wav audio url")
 	}
 
@@ -151,6 +157,10 @@ func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text strin
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&whisperResp); err != nil {
 		return text, err
+	}
+
+	if whisperResp.Error != nil {
+		return text, fmt.Errorf("Analyzing error: %s", *whisperResp.Error)
 	}
 
 	return whisperResp.Text, nil

@@ -65,7 +65,9 @@ func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 }
 
 func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
-	call := model.Call{Id: callId, Processed: true}
+	name := strings.Split(audioUrl[strings.LastIndex(audioUrl, "/")+1:], ".")[0]
+
+	call := model.Call{Id: callId, Processed: true, Name: &name}
 
 	audio, err := c.GetAudioFile(audioUrl)
 	if err != nil {
@@ -92,7 +94,6 @@ func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {
 	}
 
 	contentType := strings.Split(resp.Header.Get("Content-Type"), "/")
-	fmt.Print(contentType)
 	if contentType[0] != "audio" {
 		return nil, errors.New("Not audio file provided")
 	}

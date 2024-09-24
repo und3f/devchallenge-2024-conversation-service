@@ -3,6 +3,7 @@ package call
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -54,7 +55,12 @@ func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 	call := c.AnalyzeCall(callId, audioUrl)
 
 	c.dao.UpdateCall(call)
-	log.Printf("Processed call %d", callId)
+
+	var err string
+	if call.ProcessError != nil {
+		err = *call.ProcessError
+	}
+	log.Printf("Processed call %d, err = %s", callId, err)
 }
 
 func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
@@ -82,6 +88,11 @@ func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {
 	resp, err := http.Get(audioUrl)
 	if err != nil {
 		return audio, err
+	}
+
+	contentType := resp.Header.Get("Content-Type")
+	if contentType != "audio/wav" {
+		return nil, errors.New("Not wav audio url")
 	}
 
 	defer resp.Body.Close()

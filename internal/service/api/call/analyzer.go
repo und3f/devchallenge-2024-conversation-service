@@ -24,6 +24,16 @@ type SentimentResp struct {
 	Output string `json:"output"`
 }
 
+type DataExtractionRequest struct {
+	Text   string `json:"text"`
+	Schema string `json:"schema"`
+}
+
+type DataExtractionSchema struct {
+	Location string `json:"location"`
+	Name     string `json:"name"`
+}
+
 var EmotionOutputToEmotionValue = map[string]string{
 	"NEG": "Negative",
 	"POS": "Positive",
@@ -48,9 +58,7 @@ func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 }
 
 func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
-	name := strings.Split(audioUrl[strings.LastIndex(audioUrl, "/")+1:], ".")[0]
-
-	call := model.Call{Id: callId, Processed: true, Name: &name}
+	call := model.Call{Id: callId, Processed: true}
 
 	audio, err := c.GetAudioFile(audioUrl)
 	if err != nil {
@@ -76,6 +84,21 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 	}
 
 	call.EmotionalTone = &emotional
+
+	data, err := c.RequestDataExtraction(text)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to extract data: %s", err)
+		call.ProcessError = &errStr
+		return call
+	}
+
+	if len(data.Name) > 0 {
+		call.Name = &data.Name
+	}
+
+	if len(data.Name) > 0 {
+		call.Location = &data.Location
+	}
 
 	return call
 }
@@ -158,6 +181,44 @@ func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text strin
 	}
 
 	return strings.TrimSpace(whisperResp.Text), nil
+}
+
+func (c *Controller) RequestDataExtraction(text string) (data DataExtractionSchema, err error) {
+	url, err := url.JoinPath(c.srvConf.SentimentUrl, "/extract")
+	if err != nil {
+		return data, err
+	}
+
+	var schema DataExtractionSchema
+
+	schemaBytes, err := json.Marshal(&schema)
+	if err != nil {
+		return data, err
+	}
+
+	request := DataExtractionRequest{
+		Text:   text,
+		Schema: string(schemaBytes),
+	}
+
+	payload := new(bytes.Buffer)
+	json.NewEncoder(payload).Encode(&request)
+
+	resp, err := http.Post(url, "application/json", payload)
+	if err != nil {
+		return data, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return data, fmt.Errorf("Invalid response status: %s", resp.Status)
+	}
+
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&data); err != nil {
+		return data, err
+	}
+
+	return data, nil
 }
 
 func (c *Controller) RequestSentimentAnalyze(text string) (sentiment string, err error) {

@@ -6,8 +6,8 @@ COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./sentiment-get-models.py .
-COPY ./sentiment-server.py .
-
 RUN ./sentiment-get-models.py
+
+COPY ./sentiment-server.py .
 
 CMD [ "./sentiment-server.py" ]

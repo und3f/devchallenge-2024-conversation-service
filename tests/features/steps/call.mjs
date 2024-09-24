@@ -5,7 +5,7 @@ import assert from 'assert'
 
 const PROCESSING_TIME = 5 * 1000
 const sampleCreateCall = {
-  'audio_url': 'http://example.com/audiofile.wav'
+  'audio_url': 'https://github.com/ggerganov/whisper.cpp/raw/refs/heads/master/samples/jfk.wav'
 }
 
 let createResponse, getResponse

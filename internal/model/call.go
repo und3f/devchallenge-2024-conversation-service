@@ -69,8 +69,8 @@ WHERE id IN (
 	JOIN category_points
 		ON points.id = category_points.point_id
 	WHERE
-		LOWER((SELECT text FROM calls WHERE id = $1))
-		LIKE CONCAT('%', CONCAT(LOWER(points.text), '%')))
+		(SELECT text FROM calls WHERE id = $1)
+		ILIKE CONCAT('%', CONCAT(points.text, '%')))
 ORDER BY title
 		`,
 		callId,

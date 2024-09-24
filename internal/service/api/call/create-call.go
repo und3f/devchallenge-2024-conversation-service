@@ -84,7 +84,18 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 	}
 
 	call.Text = &text
+	call.Categories, err = c.AnalyzeTextCategories(text)
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to categorize audio: %s", err)
+		call.ProcessError = &errStr
+		return call
+	}
+
 	return call
+}
+
+func (c *Controller) AnalyzeTextCategories(text string) (categories []string, err error) {
+	return nil, nil
 }
 
 func (c *Controller) GetAudioFile(audioUrl string) (audio []byte, err error) {

@@ -16,7 +16,7 @@ type Call struct {
 	Name          *string  `json:"name"`
 	Location      *string  `json:"location"`
 	EmotionalTone *string  `json:"emotional_tone"`
-	Categories    []string `json:"categories"`
+	Categories    []string `json:"categories,omitempty"`
 }
 
 func (d *Dao) CreateCall(audioFile string) (id int32, err error) {
@@ -45,6 +45,10 @@ FROM calls WHERE id = $1
 		return
 	}
 
+	if !call.Processed {
+		return
+	}
+
 	call.Categories, err = d.GetCallCategories(id)
 	if err != nil {
 		return
@@ -57,13 +61,17 @@ func (d *Dao) GetCallCategories(callId int32) (categories []string, err error) {
 	rows, err := d.pg.Query(
 		context.Background(),
 		`
-SELECT categories.title
-FROM call_categories
-JOIN
-	categories ON call_categories.category_id = categories.id
-WHERE
-	call_categories.call_id = $1
-ORDER BY categories.title ASC
+SELECT title
+FROM categories
+WHERE id IN (
+	SELECT category_id
+	FROM points
+	JOIN category_points
+		ON points.id = category_points.point_id
+	WHERE
+		LOWER((SELECT text FROM calls WHERE id = $1))
+		LIKE CONCAT('%', CONCAT(LOWER(points.text), '%')))
+ORDER BY title
 		`,
 		callId,
 	)

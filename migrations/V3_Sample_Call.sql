@@ -8,7 +8,7 @@ VALUES (
   'Sample Call',
   'Kyiv',
   'Neutral',
-  'TRANSCRIBED TEXT'
+  'Hello and welcome to out call in Kyiv. I am happy to talk about visa and diplomatic inquries!'
 );
 
 --changeset V3_Sample_Call:insertSampleCallCategories

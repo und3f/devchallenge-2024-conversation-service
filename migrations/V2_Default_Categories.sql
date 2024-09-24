@@ -12,7 +12,7 @@ VALUES
 
 --changeset V2_Default_Categories:insertVisaCategories
 INSERT INTO points(text) VALUES('Visa');
-INSERT INTO points(text) VALUES('Passport Service');
+INSERT INTO points(text) VALUES('Passport');
 
 INSERT INTO category_points(category_id, point_id)
 VALUES
@@ -22,7 +22,7 @@ VALUES
   ),
   (
     (SELECT id FROM categories WHERE title = 'Visa and Passport Services'),
-    (SELECT id FROM points WHERE text = 'Passport Service')
+    (SELECT id FROM points WHERE text = 'Passport')
   );
 
 --changeset V2_Default_Categories:insertDiplomaticInquiries
@@ -57,7 +57,8 @@ VALUES
   
 --changeset V2_Default_Categories:insertTrade
 INSERT INTO points(text) VALUES('Trade');
-INSERT INTO points(text) VALUES('Economic Cooperation');
+INSERT INTO points(text) VALUES('Economic');
+INSERT INTO points(text) VALUES('Economy');
 
 INSERT INTO category_points(category_id, point_id)
 VALUES
@@ -67,6 +68,10 @@ VALUES
   ),
   (
     (SELECT id FROM categories WHERE title = 'Trade and Economic Cooperation' ),
-    (SELECT id FROM points WHERE text = 'Economic Cooperation')
+    (SELECT id FROM points WHERE text = 'Economic')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Trade and Economic Cooperation' ),
+    (SELECT id FROM points WHERE text = 'Economy')
   )
   

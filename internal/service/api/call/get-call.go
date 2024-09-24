@@ -9,6 +9,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type CallResponse struct {
+	Id int32 `json:"id"`
+
+	Processed    bool    `json:"-"`
+	ProcessError *string `json:"-"`
+
+	Text          *string  `json:"text"`
+	Name          *string  `json:"name"`
+	Location      *string  `json:"location"`
+	EmotionalTone *string  `json:"emotional_tone"`
+	Categories    []string `json:"categories"`
+}
+
 func (c *Controller) GetCall(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]

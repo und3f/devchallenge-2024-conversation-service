@@ -17,8 +17,8 @@ RUN apt-get update && \
 
 COPY --from=build /app /app
 
-RUN /app/models/download-ggml-model.sh medium.en /app/models
+RUN /app/models/download-ggml-model.sh large-v3-q5_0 /app/models
 
 EXPOSE 8081
 
-CMD [ "/app/server", "--host", "0", "--port", "8081", "-m", "/app/models/ggml-medium.en.bin" ]
+CMD [ "/app/server", "--host", "0", "--port", "8081", "-m", "/app/models/ggml-large-v3-q5_0.bin" ]

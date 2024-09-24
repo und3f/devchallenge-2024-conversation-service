@@ -43,7 +43,7 @@ Then('I should receive call processed response', async function () {
   assert.deepEqual({
     "id": 1,
     "name": "Sample Call",
-    "text": "TRANSCRIBED TEXT",
+    "text": "Hello and welcome to out call in Kyiv. I am happy to talk about visa and diplomatic inquries!",
     "location": "Kyiv",
     "emotional_tone": "Neutral",
     "categories": ['Diplomatic Inquiries', 'Visa and Passport Services']

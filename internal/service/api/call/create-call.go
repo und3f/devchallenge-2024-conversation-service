@@ -163,5 +163,5 @@ func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text strin
 		return text, fmt.Errorf("Analyzing error: %s", *whisperResp.Error)
 	}
 
-	return whisperResp.Text, nil
+	return strings.TrimSpace(whisperResp.Text), nil
 }

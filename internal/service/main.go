@@ -18,14 +18,14 @@ type Service struct {
 	handler http.Handler
 }
 
-func New(router *mux.Router, dao *model.Dao) *Service {
+func New(router *mux.Router, dao *model.Dao, whisperUrl string) *Service {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "README.md")
 	})
 
 	apiRouter := router.PathPrefix("/api").Subrouter()
 	category.Mount(apiRouter, dao)
-	call.Mount(apiRouter, dao)
+	call.Mount(apiRouter, dao, whisperUrl)
 
 	return &Service{
 		wrapWithMiddleware(router),

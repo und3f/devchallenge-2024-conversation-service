@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	service.New(mux.NewRouter(), NewDao()).Run()
+	whisperUrl := os.Getenv("WHISPER_URL")
+	service.New(mux.NewRouter(), NewDao(), whisperUrl).Run()
 }
 
 func NewDao() *model.Dao {

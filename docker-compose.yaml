@@ -53,6 +53,7 @@ services:
     environment:
       - POSTGRES_URL=postgresql://postgres:mysecretpassword@postgres:5432/postgres?sslmode=allow&search_path=public
       - POSTGRES_PWD=mysecretpassword
+      - WHISPER_URL=http://whisper:8081
 
   tests:
     container_name: tests_123_devchalange_24

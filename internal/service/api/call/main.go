@@ -5,12 +5,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Mount(r *mux.Router, dao *model.Dao) {
-	c := &Controller{dao: dao}
-	c.Mount(r)
+type Controller struct {
+	dao        *model.Dao
+	whisperUrl string
 }
 
-type Controller struct {
-	dao            *model.Dao
-	subscribeRoute *mux.Route
+func Mount(r *mux.Router, dao *model.Dao, whisperUrl string) {
+	c := &Controller{dao: dao, whisperUrl: whisperUrl}
+	c.Mount(r)
 }

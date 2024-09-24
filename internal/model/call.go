@@ -7,12 +7,15 @@ type CallCreateResponse struct {
 }
 
 type Call struct {
-	Id            int32    `json:"id"`
-	Processed     bool     `json:"-"`
+	Id int32 `json:"id"`
+
+	Processed    bool    `json:"-"`
+	ProcessError *string `json:"-"`
+
+	Text          *string  `json:"text"`
 	Name          *string  `json:"name"`
 	Location      *string  `json:"location"`
 	EmotionalTone *string  `json:"emotional_tone"`
-	Text          *string  `json:"text"`
 	Categories    []string `json:"categories"`
 }
 
@@ -32,9 +35,12 @@ func (d *Dao) CreateCall(audioFile string) (id int32, err error) {
 func (d *Dao) GetCall(id int32) (call Call, err error) {
 	err = d.pg.QueryRow(
 		context.Background(),
-		"SELECT * FROM calls WHERE id = $1",
+		`
+SELECT id, processed, error, name, location, emotional_tone, text
+FROM calls WHERE id = $1
+		`,
 		id,
-	).Scan(&call.Id, &call.Processed, &call.Name, &call.Location, &call.EmotionalTone, &call.Text)
+	).Scan(&call.Id, &call.Processed, &call.ProcessError, &call.Name, &call.Location, &call.EmotionalTone, &call.Text)
 	if err != nil {
 		return
 	}
@@ -76,4 +82,26 @@ ORDER BY categories.title ASC
 	}
 
 	return
+}
+
+func (d *Dao) UpdateCall(call Call) error {
+	_, err := d.pg.Query(
+		context.Background(),
+		`
+UPDATE calls
+SET
+	processed = $2,
+	error = $3,
+	text = $4,
+	name = $5,
+	location = $6,
+	emotional_tone= $7
+WHERE id = $1
+	`,
+		call.Id,
+		call.Processed, call.ProcessError,
+		call.Text, call.Name, call.Location, call.EmotionalTone,
+	)
+
+	return err
 }

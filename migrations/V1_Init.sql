@@ -25,6 +25,7 @@ CREATE TABLE category_points (
 --changeset V1_Init:createCalls
 CREATE TABLE calls (
   id              INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  processed       BOOLEAN DEFAULT FALSE,
   name            VARCHAR(255),
   location        VARCHAR(255),
   emotional_tone  VARCHAR(20),

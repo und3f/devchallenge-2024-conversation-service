@@ -10,7 +10,7 @@ import (
 type Category struct {
 	Id     int32    `json:"id"`
 	Title  string   `json:"title"`
-	Points []string `json:"points",omitifempty`
+	Points []string `json:"points,omitempty"`
 }
 
 func (d *Dao) ListCategories() ([]Category, error) {

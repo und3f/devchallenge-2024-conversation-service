@@ -5,7 +5,8 @@ import (
 	"net/http"
 
 	"devchallenge.it/conversation/internal/model"
-	"devchallenge.it/conversation/internal/service/api"
+	"devchallenge.it/conversation/internal/service/api/call"
+	"devchallenge.it/conversation/internal/service/api/category"
 	"github.com/gorilla/mux"
 )
 
@@ -23,7 +24,8 @@ func New(router *mux.Router, dao *model.Dao) *Service {
 	})
 
 	apiRouter := router.PathPrefix("/api").Subrouter()
-	api.Mount(apiRouter, dao)
+	category.Mount(apiRouter, dao)
+	call.Mount(apiRouter, dao)
 
 	return &Service{
 		wrapWithMiddleware(router),

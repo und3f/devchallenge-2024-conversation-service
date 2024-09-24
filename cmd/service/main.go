@@ -12,8 +12,8 @@ import (
 
 func main() {
 	servConf := model.ServicesConf{
-		WhisperUrl:   os.Getenv("WHISPER_URL"),
-		SentimentUrl: os.Getenv("SENTIMENT_URL"),
+		WhisperUrl: os.Getenv("WHISPER_URL"),
+		NlpUrl:     os.Getenv("NLP_URL"),
 	}
 	service.New(mux.NewRouter(), NewDao(), servConf).Run()
 }

@@ -184,7 +184,7 @@ func (c *Controller) RequestAudioAnalyze(callId int32, audio []byte) (text strin
 }
 
 func (c *Controller) RequestDataExtraction(text string) (data DataExtractionSchema, err error) {
-	url, err := url.JoinPath(c.srvConf.SentimentUrl, "/extract")
+	url, err := url.JoinPath(c.srvConf.NlpUrl, "/extract")
 	if err != nil {
 		return data, err
 	}
@@ -222,7 +222,7 @@ func (c *Controller) RequestDataExtraction(text string) (data DataExtractionSche
 }
 
 func (c *Controller) RequestSentimentAnalyze(text string) (sentiment string, err error) {
-	url, err := url.JoinPath(c.srvConf.SentimentUrl, "/emotion")
+	url, err := url.JoinPath(c.srvConf.NlpUrl, "/emotion")
 	if err != nil {
 		return sentiment, err
 	}

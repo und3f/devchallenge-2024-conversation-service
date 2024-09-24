@@ -1,21 +1,6 @@
-# <SERVICE_NAME> REST service
+# Conversation REST service
 
-Made during DEV Challenge <YAER> competition (backend nomination).
-
-## Test
-
-The tests are executed during container build as a part of the `Dockerfile`.
-
-To execute tests separately run:
-```
-docker build --target test --progress plain --no-cache .
-```
-
-Also you may execute tests locally by running:
-
-```
-go test -v ./...
-```
+Made during DEV Challenge 2024 competition (backend nomination).
 
 ## Run
 
@@ -25,9 +10,24 @@ To start application simply run:
 docker compose up --build
 ```
 
+## Tests
+
+The tests are executed on docker compose start.
+
+To execute tests separately run:
+```
+docker compose up tests
+```
+
+Also you may execute tests locally by running:
+
+```
+npm run test --prefix tests
+```
+
 ## REST operations
 
-### /category ENDPOINT
+### /api/category ENDPOINT
 
 Categories represent the topics of conversation. Each conversation may cover
 multiple topics simultaneously. The conversation topics must be assigned
@@ -36,18 +36,31 @@ based on these topics from their respective fields.
 
 When adding or updating a category, it is necessary to check if the conversations still belong to this category.
 
-GET /category – Returns a list of all conversation topics.
+GET /api/category -- Returns a list of all conversation topics.
 
-POST /category – Creates a new conversation topic.
+POST /api/category -- Creates a new conversation topic.
 
-PUT /category/{category_id} – Updates an existing conversation topic.
+PUT /api/category/{category_id} -- Updates an existing conversation topic.
 
-DELETE /category/{category_id} – Deletes a conversation topic by the specified identifier.
+DELETE /api/category/{category_id} -- Deletes a conversation topic by the specified identifier.
 
 Validation Rules:
+- title is required for POST, optional for PUT.
+- points must be an array of strings if provided.
 
-    title is required for POST, optional for PUT.
-    points must be an array of strings if provided.
+### /api/call ENDPOINT
+
+This API provides functionality for processing and analyzing audio calls. It
+allows users to submit audio files via a URL, where the service will handle the
+download, transcription, and analysis of the content. The system extracts key
+information such as the call name and location, determines the emotional
+tone of the conversation, and stores the results.
+
+POST /api/call -- Creates a new call based on the provided audio file URL. Supported file formats are wav and mp3.
+
+GET /api/call/{id} -- Retrieves details of a call by the specified identifier.
+The emotional tone must be one of the following values: Neutral, Positive,
+Negative, Angry.
 
 ## Corner cases
 

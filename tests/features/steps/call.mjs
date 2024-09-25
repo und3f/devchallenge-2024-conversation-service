@@ -4,7 +4,7 @@ import { When, Then, wrapPromiseWithTimeout } from '@cucumber/cucumber'
 import assert from 'assert'
 
 const callRerequestInterval = 1 * 1000
-const callRerequestLongInterval = 5 * 1000
+const callRerequestLongInterval = 15 * 1000
 
 const sampleCreateCall = {
   'audio_url': 'https://github.com/ggerganov/whisper.cpp/raw/refs/heads/master/samples/jfk.wav'
@@ -50,6 +50,10 @@ const checkCallProcessed = async function (callId, interval) {
 
 Then('I wait till the call is processed', {timeout: -1}, async function() {
   await checkCallProcessed(createdCallId, callRerequestInterval)
+})
+
+Then('I wait till the call is processed using long poll', {timeout: -1}, async function() {
+  await checkCallProcessed(createdCallId, callRerequestLongInterval)
 })
 
 Then('get call should return unprocessable entity', async function() {

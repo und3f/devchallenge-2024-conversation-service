@@ -37,9 +37,18 @@ npm run test --prefix tests
 
 Since I don't have GPU all LLM model are executed on CPU only.
 
-### Speech audio limitation
+### System requirements
 
-TBD
+CPU: 3.6 GHz, 8 Threads
+RAM: 16Gb 
+
+### Concurrent requests
+
+Due to the limitation of the developer laptop only one concurent analyze is possible.
+
+### Audio file limitation
+
+Max allowed file size is 2.6MB.
 
 ## REST operations
 

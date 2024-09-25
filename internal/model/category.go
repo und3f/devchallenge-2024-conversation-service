@@ -2,10 +2,14 @@ package model
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 	"slices"
 	"strings"
 )
+
+var ErrDupCategoryTitle = errors.New("Duplicate category title.")
 
 type Category struct {
 	Id     int32    `json:"id"`
@@ -81,6 +85,17 @@ WHERE
 }
 
 func (d *Dao) CreateCategory(createReq Category) (category Category, err error) {
+	var totalFoundCategories int32
+	err = d.pg.QueryRow(
+		context.Background(),
+		"SELECT COUNT(*) FROM categories WHERE title = $1",
+		createReq.Title,
+	).Scan(&totalFoundCategories)
+	if totalFoundCategories > 0 {
+		return category, fmt.Errorf("Category \"%s\" already exists.",
+			createReq.Title)
+	}
+
 	var id int32
 	err = d.pg.QueryRow(
 		context.Background(),

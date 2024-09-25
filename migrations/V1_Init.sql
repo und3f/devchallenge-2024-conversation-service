@@ -3,13 +3,13 @@
 --changeset V1_Init:createPoints
 CREATE TABLE points (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  text TEXT
+  text TEXT UNIQUE
 );
 
 --changeset V1_Init:createCategories
 CREATE TABLE categories (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  title TEXT
+  title TEXT UNIQUE
 );
 
 --changeset V1_Init:createCategoryPoints

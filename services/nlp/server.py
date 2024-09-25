@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 from pysentimiento import create_analyzer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
@@ -27,19 +28,23 @@ model.eval()
 
 analyzer = create_analyzer(task="sentiment", lang="en")
 
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "ok"})
 
 @app.route('/emotion', methods=['POST'])
 def predict_emotion():
+    logger.info('/emotion')
+
     text = request.get_json()["text"]
-    print("Analyzing", text)
 
     out = analyzer.predict(text)
-    print(out)
-
     resp = {
         "output": out.output,
         "probas": out.probas
@@ -48,11 +53,11 @@ def predict_emotion():
 
 @app.route('/extract', methods=['POST'])
 def predict_extract():
+    logger.info('/extract')
+
     json = request.get_json()
     text = json["text"]
     schema = json["schema"]
-
-    print("Analyzing", text)
 
     prediction = predict_NuExtract(model, tokenizer, text, schema, example=["","",""])
     return prediction

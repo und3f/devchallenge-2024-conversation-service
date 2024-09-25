@@ -94,22 +94,49 @@ VALUES
 -- Consular Assistance
 -- 
 --     Points:
+--         "Apostille"
 --         "Consular"
+--         "Internation Adoption"
+--         "Legalization"
 --         "Ministry of Foreign Affairs of Ukraine"
 --         "Passport"
 -- 
+INSERT INTO points(text) VALUES('Apostille');
 INSERT INTO points(text) VALUES('Consular');
+INSERT INTO points(text) VALUES('Immigration to Ukraine');
+INSERT INTO points(text) VALUES('International Adoption');
+INSERT INTO points(text) VALUES('Legalization');
 INSERT INTO points(text) VALUES('Ministry of Foreign Affairs of Ukraine');
 
 INSERT INTO category_points(category_id, point_id)
 VALUES
   (
     (SELECT id FROM categories WHERE title = 'Consular Assistance'),
+    (SELECT id FROM points WHERE text = 'Apostille')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Consular Assistance'),
     (SELECT id FROM points WHERE text = 'Consular')
   ),
   (
     (SELECT id FROM categories WHERE title = 'Consular Assistance'),
+    (SELECT id FROM points WHERE text = 'Immigration to Ukraine')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Consular Assistance'),
     (SELECT id FROM points WHERE text = 'Ministry of Foreign Affairs of Ukraine')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Consular Assistance'),
+    (SELECT id FROM points WHERE text = 'Ministry of Foreign Affairs of Ukraine')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Consular Assistance'),
+    (SELECT id FROM points WHERE text = 'Legalization')
+  ),
+  (
+    (SELECT id FROM categories WHERE title = 'Consular Assistance'),
+    (SELECT id FROM points WHERE text = 'International Adoption')
   ),
   (
     (SELECT id FROM categories WHERE title = 'Consular Assistance'),

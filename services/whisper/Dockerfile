@@ -17,7 +17,7 @@ RUN apt-get update && \
 
 COPY --from=build /app /app
 
-RUN /app/models/download-ggml-model.sh large-v3-q5_0 /app/models
+RUN /app/models/download-ggml-model.sh large-v2 /app/models
 
 EXPOSE 8081
 
@@ -27,4 +27,4 @@ CMD [ "/app/server", \
       "--convert", \
       "--best-of", "5", \
       "--beam-size", "5", \
-      "-m", "/app/models/ggml-large-v3-q5_0.bin" ]
+      "-m", "/app/models/ggml-large-v2.bin" ]

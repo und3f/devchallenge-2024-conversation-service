@@ -12,11 +12,6 @@ type CallCreateRequest struct {
 	AudioUrl string `json:"audio_url"`
 }
 
-type WhisperResponse struct {
-	Text  string  `json:"text"`
-	Error *string `json:"error"`
-}
-
 func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 	var callCreate CallCreateRequest
 

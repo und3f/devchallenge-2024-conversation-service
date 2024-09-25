@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
+	"devchallenge.it/conversation/internal/controller"
 	"devchallenge.it/conversation/internal/model"
-	"devchallenge.it/conversation/internal/service"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -15,7 +15,7 @@ func main() {
 		WhisperUrl: os.Getenv("WHISPER_URL"),
 		NlpUrl:     os.Getenv("NLP_URL"),
 	}
-	service.New(mux.NewRouter(), NewDao(), servConf).Run()
+	controller.New(mux.NewRouter(), NewDao(), servConf).Run()
 }
 
 func NewDao() *model.Dao {

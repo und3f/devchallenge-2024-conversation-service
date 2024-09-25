@@ -1,12 +1,12 @@
-package service
+package controller
 
 import (
 	"log"
 	"net/http"
 
+	"devchallenge.it/conversation/internal/controller/api/call"
+	"devchallenge.it/conversation/internal/controller/api/category"
 	"devchallenge.it/conversation/internal/model"
-	"devchallenge.it/conversation/internal/service/api/call"
-	"devchallenge.it/conversation/internal/service/api/category"
 	"github.com/gorilla/mux"
 )
 

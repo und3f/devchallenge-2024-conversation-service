@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v5"
 )
 
 type CallResponse struct {
@@ -33,6 +34,11 @@ func (c *Controller) GetCall(w http.ResponseWriter, r *http.Request) {
 
 	call, err := c.dao.GetCall(int32(id))
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
 		log.Print(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

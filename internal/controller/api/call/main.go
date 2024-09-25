@@ -24,7 +24,7 @@ type Controller struct {
 func Mount(r *mux.Router, dao *model.Dao, srvConf model.ServicesConf) {
 	c := &Controller{
 		dao:         dao,
-		analyzeChan: make(chan AnalyzeTask),
+		analyzeChan: make(chan AnalyzeTask, 10),
 
 		nlp:     nlp.NLP{srvConf.NlpUrl},
 		audio:   audio.Audio{},

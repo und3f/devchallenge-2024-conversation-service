@@ -33,7 +33,13 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		Id: callId,
 	}
 
-	c.analyzeChan <- AnalyzeTask{CallId: callId, Url: callCreate.AudioUrl}
+	select {
+	case c.analyzeChan <- AnalyzeTask{CallId: callId, Url: callCreate.AudioUrl}:
+	default:
+		log.Printf("Failed to schedule task as waiting queue is full.")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)

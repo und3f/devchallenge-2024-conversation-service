@@ -10,4 +10,4 @@ RUN npm ci && \
 COPY . .
 
 USER node
-CMD ["npm", "run", "test"]
+ENTRYPOINT ["npm", "run"]

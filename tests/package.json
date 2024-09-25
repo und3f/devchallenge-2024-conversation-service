@@ -1,7 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "test": "cucumber-js"
+    "test": "cucumber-js",
+    "test-fast": "cucumber-js --tags 'not @long'",
+    "test-long": "cucumber-js --tags '@long'"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.0"

@@ -7,16 +7,22 @@ Made during DEV Challenge 2024 competition (backend nomination).
 To start application simply run:
 
 ```
-docker compose up --build
+docker compose --profile test-fast up --build
 ```
 
 ## Tests
 
-The tests are executed on docker compose start.
+The fasts tests are executed on docker compose start.
 
-To execute tests separately run:
+To execute all integration tests (including long-running tests, requires
+Internet access) run:
 ```
-docker compose up tests
+docker compose up test
+```
+
+Fast tests that do not require audio processing could be run with:
+```
+docker compose up --build
 ```
 
 Also you may execute tests locally by running:
@@ -24,6 +30,16 @@ Also you may execute tests locally by running:
 ```
 npm run test --prefix tests
 ```
+
+## Corner cases
+
+### CPU only
+
+Since I don't have GPU all LLM model are executed on CPU only.
+
+### Speech audio limitation
+
+TBD
 
 ## REST operations
 
@@ -61,7 +77,3 @@ POST /api/call -- Creates a new call based on the provided audio file URL. Suppo
 GET /api/call/{id} -- Retrieves details of a call by the specified identifier.
 The emotional tone must be one of the following values: Neutral, Positive,
 Negative, Angry.
-
-## Corner cases
-
-TBD

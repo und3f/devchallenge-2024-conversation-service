@@ -4,7 +4,7 @@ import { When, Then, wrapPromiseWithTimeout } from '@cucumber/cucumber'
 import assert from 'assert'
 
 const callRerequestInterval = 1 * 1000
-const callRerequestLongInterval = 15 * 1000
+const callRerequestLongInterval = 17 * 1000
 
 const sampleCreateCall = {
   'audio_url': 'https://github.com/ggerganov/whisper.cpp/raw/refs/heads/master/samples/jfk.wav'

@@ -7,10 +7,14 @@ import (
 	"devchallenge.it/conversation/internal/model"
 )
 
-func (c *Controller) ProcessCall(callId int32, audioUrl string) {
-	c.analyzeMutex.Lock()
-	defer c.analyzeMutex.Unlock()
+func (c *Controller) Analyzer() {
+	for {
+		task := <-c.analyzeChan
+		c.ProcessCall(task.CallId, task.Url)
+	}
+}
 
+func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 	log.Printf("Processing call %d...", callId)
 
 	call := c.AnalyzeCall(callId, audioUrl)

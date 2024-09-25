@@ -33,7 +33,7 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		Id: callId,
 	}
 
-	go c.ProcessCall(callId, callCreate.AudioUrl)
+	c.analyzeChan <- AnalyzeTask{CallId: callId, Url: callCreate.AudioUrl}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)

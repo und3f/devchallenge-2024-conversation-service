@@ -1,8 +1,6 @@
 package model
 
 import (
-	"context"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -15,5 +13,3 @@ func NewDao(pgPool *pgxpool.Pool) *Dao {
 		pg: pgPool,
 	}
 }
-
-var ctx = context.Background()

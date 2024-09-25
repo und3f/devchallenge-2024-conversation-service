@@ -93,7 +93,7 @@ ORDER BY title
 }
 
 func (d *Dao) UpdateCall(call Call) error {
-	_, err := d.pg.Query(
+	_, err := d.pg.Exec(
 		context.Background(),
 		`
 UPDATE calls

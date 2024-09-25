@@ -21,4 +21,10 @@ RUN /app/models/download-ggml-model.sh large-v3-q5_0 /app/models
 
 EXPOSE 8081
 
-CMD [ "/app/server", "--host", "0", "--port", "8081", "-m", "/app/models/ggml-large-v3-q5_0.bin" ]
+CMD [ "/app/server", \
+      "--host", "0", \
+      "--port", "8081", \
+      "--convert", \
+      "--best-of", "5", \
+      "--beam-size", "5", \
+      "-m", "/app/models/ggml-large-v3-q5_0.bin" ]

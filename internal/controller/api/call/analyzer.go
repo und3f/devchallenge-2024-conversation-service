@@ -8,9 +8,12 @@ import (
 )
 
 func (c *Controller) Analyzer() {
+
 	for {
-		task := <-c.analyzeChan
-		c.ProcessCall(task.CallId, task.Url)
+		select {
+		case task := <-c.analyzeChan:
+			c.ProcessCall(task.CallId, task.Url)
+		}
 	}
 }
 
@@ -38,6 +41,7 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 		return call
 	}
 
+	log.Printf("  processing call %d: speech recognition...", callId)
 	text, err := c.whisper.RecognizeSpeech(callId, audio)
 	if err != nil {
 		errStr := fmt.Sprintf("Speech recongnition failure: %s", err)
@@ -47,6 +51,7 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 
 	call.Text = &text
 
+	log.Printf("  processing call %d: sentiment prediction...", callId)
 	emotional, err := c.nlp.GetSentiment(text)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to analyze emotional tone: %s", err)
@@ -56,6 +61,7 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 
 	call.EmotionalTone = &emotional
 
+	log.Printf("  processing call %d: data extraction...", callId)
 	data, err := c.nlp.ExtractData(text)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to extract data: %s", err)

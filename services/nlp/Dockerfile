@@ -13,4 +13,5 @@ COPY ./server.py /usr/src/app/server.py
 
 EXPOSE 8080
 
+ENV HF_HUB_OFFLINE=1
 CMD [ "/usr/src/app/server.py" ]

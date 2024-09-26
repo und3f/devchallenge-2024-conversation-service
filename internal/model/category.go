@@ -7,6 +7,8 @@ import (
 	"log"
 	"slices"
 	"strings"
+
+	"github.com/jackc/pgx/v5"
 )
 
 var ErrDupCategoryTitle = errors.New("Duplicate category title.")
@@ -96,8 +98,24 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 			createReq.Title)
 	}
 
+	tx, err := d.pg.BeginTx(
+		context.Background(),
+		pgx.TxOptions{},
+	)
+	if err != nil {
+		return category, err
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
 	var id int32
-	err = d.pg.QueryRow(
+	err = tx.QueryRow(
 		context.Background(),
 		"INSERT INTO categories (title) VALUES($1) RETURNING id",
 		createReq.Title,
@@ -107,7 +125,7 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 		return
 	}
 
-	if err = d.BindCategoryPoints(id, createReq.Points); err != nil {
+	if err = d.BindCategoryPoints(tx, id, createReq.Points); err != nil {
 		return
 	}
 
@@ -117,14 +135,14 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 	return category, nil
 }
 
-func (d *Dao) BindCategoryPoints(category_id int32, points []string) error {
+func (d *Dao) BindCategoryPoints(tx pgx.Tx, category_id int32, points []string) error {
 	for _, point := range points {
 		pointId, err := d.CreateOrGetPoint(point)
 		if err != nil {
 			return err
 		}
 
-		if err := d.AddCategoryPoint(category_id, pointId); err != nil {
+		if err := d.AddCategoryPoint(tx, category_id, pointId); err != nil {
 			return err
 		}
 	}
@@ -153,8 +171,8 @@ func (d *Dao) CreateOrGetPoint(text string) (id int32, err error) {
 	return
 }
 
-func (d *Dao) AddCategoryPoint(categoryId int32, pointId int32) (err error) {
-	_, err = d.pg.Exec(
+func (d *Dao) AddCategoryPoint(tx pgx.Tx, categoryId int32, pointId int32) (err error) {
+	_, err = tx.Exec(
 		context.Background(),
 		"INSERT INTO category_points (category_id, point_id) VALUES ($1, $2)",
 		categoryId, pointId,
@@ -163,14 +181,28 @@ func (d *Dao) AddCategoryPoint(categoryId int32, pointId int32) (err error) {
 }
 
 func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err error) {
+	tx, err := d.pg.BeginTx(
+		context.Background(),
+		pgx.TxOptions{},
+	)
+	if err != nil {
+		return category, err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
 	if len(newCategoryValue.Title) > 0 {
-		cmd, err := d.pg.Exec(
+		cmd, err := tx.Exec(
 			context.Background(),
 			"UPDATE categories SET title = $2 WHERE id = $1",
 			newCategoryValue.Id,
 			newCategoryValue.Title,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +223,7 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 		}
 	}
 
-	_, err = d.pg.Exec(
+	_, err = tx.Exec(
 		context.Background(),
 		"DELETE FROM category_points WHERE category_id = $1",
 		newCategoryValue.Id,
@@ -201,7 +233,7 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 	}
 
 	if len(newCategoryValue.Points) > 0 {
-		err = d.BindCategoryPoints(newCategoryValue.Id, newCategoryValue.Points)
+		err = d.BindCategoryPoints(tx, newCategoryValue.Id, newCategoryValue.Points)
 		if err != nil {
 			return
 		}

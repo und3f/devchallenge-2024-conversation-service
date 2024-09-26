@@ -3,13 +3,19 @@
 --changeset V1_Init:createPoints
 CREATE TABLE points (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  text TEXT UNIQUE
+  text TEXT
+    UNIQUE
+    NOT NULL
+    CONSTRAINT point_text_min_length CHECK (char_length(text) >= 3)
 );
 
 --changeset V1_Init:createCategories
 CREATE TABLE categories (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  title TEXT UNIQUE
+  title TEXT
+    NOT NULL
+    UNIQUE
+    CONSTRAINT category_title_min_length CHECK (char_length(title) >= 3)
 );
 
 --changeset V1_Init:createCategoryPoints

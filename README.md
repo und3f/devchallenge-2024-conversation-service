@@ -7,7 +7,7 @@ Made during DEV Challenge 2024 competition (backend nomination).
 To start application simply run:
 
 ```
-docker compose --profile test-fast up --build
+docker compose up
 ```
 
 ## Tests
@@ -22,7 +22,7 @@ docker compose up test
 
 Fast tests that do not require audio processing could be run with:
 ```
-docker compose up --build
+docker compose up test-fast
 ```
 
 Also you may execute tests locally by running:

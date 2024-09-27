@@ -2,7 +2,7 @@
 
 --changeset V1_Init:createPoints
 CREATE TABLE points (
-  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   text TEXT
     UNIQUE
     NOT NULL
@@ -11,7 +11,7 @@ CREATE TABLE points (
 
 --changeset V1_Init:createCategories
 CREATE TABLE categories (
-  id INT
+  id BIGINT
       GENERATED ALWAYS
         AS IDENTITY (MINVALUE 1001)
       PRIMARY KEY,
@@ -23,17 +23,17 @@ CREATE TABLE categories (
 
 --changeset V1_Init:createCategoryPoints
 CREATE TABLE category_points (
-  category_id INT
+  category_id BIGINT
     REFERENCES categories(id)
     ON DELETE CASCADE,
-  point_id INT
+  point_id BIGINT
     REFERENCES points(id)
     ON DELETE CASCADE
 );
 
 --changeset V1_Init:createCalls
 CREATE TABLE calls (
-  id              INT
+  id              BIGINT
                     GENERATED ALWAYS
                       AS IDENTITY (MINVALUE 1001)
                     PRIMARY KEY,
@@ -49,10 +49,10 @@ CREATE TABLE calls (
 
 --changeset V1_Init:createCallCategories
 CREATE TABLE call_categories (
-  call_id     INT
+  call_id     BIGINT
     REFERENCES calls(id)
     ON DELETE CASCADE,
-  category_id INT
+  category_id BIGINT
     REFERENCES categories(id)
     ON DELETE CASCADE
 );

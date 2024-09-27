@@ -3,11 +3,11 @@ package model
 import "context"
 
 type CallCreateResponse struct {
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 }
 
 type Call struct {
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	Processed    bool    `json:"-"`
 	ProcessError *string `json:"-"`
@@ -19,7 +19,7 @@ type Call struct {
 	Categories    []string `json:"categories,omitempty"`
 }
 
-func (d *Dao) CreateCall(audioFile string) (id int32, err error) {
+func (d *Dao) CreateCall(audioFile string) (id int64, err error) {
 	err = d.pg.QueryRow(
 		context.Background(),
 		"INSERT INTO calls DEFAULT VALUES RETURNING id",
@@ -32,7 +32,7 @@ func (d *Dao) CreateCall(audioFile string) (id int32, err error) {
 	return
 }
 
-func (d *Dao) GetCall(id int32) (call Call, err error) {
+func (d *Dao) GetCall(id int64) (call Call, err error) {
 	err = d.pg.QueryRow(
 		context.Background(),
 		`
@@ -57,7 +57,7 @@ FROM calls WHERE id = $1
 	return
 }
 
-func (d *Dao) GetCallCategories(callId int32) (categories []string, err error) {
+func (d *Dao) GetCallCategories(callId int64) (categories []string, err error) {
 	rows, err := d.pg.Query(
 		context.Background(),
 		`

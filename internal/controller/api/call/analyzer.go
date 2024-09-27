@@ -7,6 +7,11 @@ import (
 	"devchallenge.it/conversation/internal/model"
 )
 
+type AnalyzeTask struct {
+	CallId int64
+	Url    string
+}
+
 func (c *Controller) Analyzer() {
 
 	for {
@@ -17,7 +22,7 @@ func (c *Controller) Analyzer() {
 	}
 }
 
-func (c *Controller) ProcessCall(callId int32, audioUrl string) {
+func (c *Controller) ProcessCall(callId int64, audioUrl string) {
 	log.Printf("Processing call %d...", callId)
 
 	call := c.AnalyzeCall(callId, audioUrl)
@@ -31,7 +36,7 @@ func (c *Controller) ProcessCall(callId int32, audioUrl string) {
 	log.Printf("Processed call %d, err = %s", callId, err)
 }
 
-func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
+func (c *Controller) AnalyzeCall(callId int64, audioUrl string) model.Call {
 	call := model.Call{Id: callId, Processed: true}
 
 	audio, err := c.audio.Download(audioUrl)
@@ -42,7 +47,7 @@ func (c *Controller) AnalyzeCall(callId int32, audioUrl string) model.Call {
 	}
 
 	log.Printf("  processing call %d: speech recognition...", callId)
-	text, err := c.whisper.RecognizeSpeech(callId, audio)
+	text, err := c.whisper.RecognizeSpeech(audio)
 	if err != nil {
 		errStr := fmt.Sprintf("Speech recongnition failure: %s", err)
 		call.ProcessError = &errStr

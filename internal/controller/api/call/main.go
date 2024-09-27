@@ -8,10 +8,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type AnalyzeTask struct {
-	CallId int32
-	Url    string
-}
 type Controller struct {
 	dao         *model.Dao
 	analyzeChan chan AnalyzeTask

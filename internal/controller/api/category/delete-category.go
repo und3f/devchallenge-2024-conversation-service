@@ -17,7 +17,7 @@ func (c *Controller) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deleted, err := c.dao.DeleteCategory(int32(id))
+	deleted, err := c.dao.DeleteCategory(int64(id))
 	if err != nil {
 		log.Print(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

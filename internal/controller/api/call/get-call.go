@@ -12,7 +12,7 @@ import (
 )
 
 type CallResponse struct {
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	Processed    bool    `json:"-"`
 	ProcessError *string `json:"-"`
@@ -33,7 +33,7 @@ func (c *Controller) GetCall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	call, err := c.dao.GetCall(int32(id))
+	call, err := c.dao.GetCall(int64(id))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)

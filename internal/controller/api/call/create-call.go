@@ -2,10 +2,13 @@ package call
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"devchallenge.it/conversation/internal/model"
+	"github.com/go-http-utils/headers"
 )
 
 type CallCreateRequest struct {
@@ -33,14 +36,23 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		Id: callId,
 	}
 
-	select {
-	case c.analyzeChan <- AnalyzeTask{CallId: callId, Url: callCreate.AudioUrl}:
-	default:
-		log.Printf("Failed to schedule task as waiting queue is full.")
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := c.scheduleCallAnalyze(callId, callCreate.AudioUrl); err != nil {
+		log.Print(err)
+		http.Error(w, err.Error(), http.StatusTooManyRequests)
 		return
 	}
 
+	w.Header().Set(headers.Location, "/api/call"+strconv.Itoa(int(callId)))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)
+}
+
+func (c *Controller) scheduleCallAnalyze(callId int64, url string) error {
+	select {
+	case c.analyzeChan <- AnalyzeTask{CallId: callId, Url: url}:
+	default:
+		return errors.New("Failed to schedule task as waiting queue is full.")
+	}
+
+	return nil
 }

@@ -16,7 +16,7 @@ type WhisperResponse struct {
 	Error *string `json:"error"`
 }
 
-func (whisper *Whisper) RecognizeSpeech(callId int32, audio []byte) (text string, err error) {
+func (whisper *Whisper) RecognizeSpeech(audio []byte) (text string, err error) {
 	client := &http.Client{}
 
 	url, err := url.JoinPath(whisper.Url, "/inference")

@@ -14,7 +14,7 @@ import (
 var ErrDupCategoryTitle = errors.New("Duplicate category title.")
 
 type Category struct {
-	Id     int32    `json:"id"`
+	Id     int64    `json:"id"`
 	Title  string   `json:"title"`
 	Points []string `json:"points,omitempty"`
 }
@@ -35,7 +35,7 @@ func (d *Dao) ListCategories() ([]Category, error) {
 			return nil, err
 		}
 
-		id := values[0].(int32)
+		id := values[0].(int64)
 		title := values[1].(string)
 		points, err := d.GetCategoryPoints(id)
 		if err != nil {
@@ -52,7 +52,7 @@ func (d *Dao) ListCategories() ([]Category, error) {
 	return categories, nil
 }
 
-func (d *Dao) GetCategoryPoints(id int32) ([]string, error) {
+func (d *Dao) GetCategoryPoints(id int64) ([]string, error) {
 	points := []string{}
 
 	rows, err := d.pg.Query(
@@ -87,7 +87,7 @@ WHERE
 }
 
 func (d *Dao) CreateCategory(createReq Category) (category Category, err error) {
-	var totalFoundCategories int32
+	var totalFoundCategories int64
 	err = d.pg.QueryRow(
 		context.Background(),
 		"SELECT COUNT(*) FROM categories WHERE title = $1",
@@ -114,7 +114,7 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 		}
 	}()
 
-	var id int32
+	var id int64
 	err = tx.QueryRow(
 		context.Background(),
 		"INSERT INTO categories (title) VALUES($1) RETURNING id",
@@ -135,7 +135,7 @@ func (d *Dao) CreateCategory(createReq Category) (category Category, err error) 
 	return category, nil
 }
 
-func (d *Dao) BindCategoryPoints(tx pgx.Tx, category_id int32, points []string) error {
+func (d *Dao) BindCategoryPoints(tx pgx.Tx, category_id int64, points []string) error {
 	for _, point := range points {
 		pointId, err := d.CreateOrGetPoint(point)
 		if err != nil {
@@ -150,7 +150,7 @@ func (d *Dao) BindCategoryPoints(tx pgx.Tx, category_id int32, points []string) 
 	return nil
 }
 
-func (d *Dao) CreateOrGetPoint(text string) (id int32, err error) {
+func (d *Dao) CreateOrGetPoint(text string) (id int64, err error) {
 	err = d.pg.QueryRow(
 		context.Background(),
 		"SELECT id FROM points WHERE text = $1",
@@ -171,7 +171,7 @@ func (d *Dao) CreateOrGetPoint(text string) (id int32, err error) {
 	return
 }
 
-func (d *Dao) AddCategoryPoint(tx pgx.Tx, categoryId int32, pointId int32) (err error) {
+func (d *Dao) AddCategoryPoint(tx pgx.Tx, categoryId int64, pointId int64) (err error) {
 	_, err = tx.Exec(
 		context.Background(),
 		"INSERT INTO category_points (category_id, point_id) VALUES ($1, $2)",
@@ -245,7 +245,7 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 	return &newCategoryValue, nil
 }
 
-func (d *Dao) DeleteCategory(categoryId int32) (deleted bool, err error) {
+func (d *Dao) DeleteCategory(categoryId int64) (deleted bool, err error) {
 	cmd, err := d.pg.Exec(
 		context.Background(),
 		"DELETE FROM categories WHERE id = $1",

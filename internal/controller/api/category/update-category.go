@@ -26,7 +26,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
-	newCategoryValue.Id = int32(id)
+	newCategoryValue.Id = int64(id)
 
 	category, err := c.dao.UpdateCategory(newCategoryValue)
 	if err != nil {

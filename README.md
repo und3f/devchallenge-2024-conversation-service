@@ -10,6 +10,8 @@ To start application simply run:
 docker compose up
 ```
 
+Wait for the `Ready to use` message.
+
 ## Tests
 
 BDD tests by feature:
@@ -43,8 +45,8 @@ Since I don't have GPU all LLM model are executed on CPU only.
 
 ### System requirements
 
-CPU: 3.6 GHz, 8 Threads
-RAM: 16Gb 
+CPU: 3.6 GHz, 12 Threads
+RAM: 16 GB 
 
 ### Concurrent requests
 

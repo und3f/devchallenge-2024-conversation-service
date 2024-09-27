@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "test": "cucumber-js",
-    "test-fast": "cucumber-js --tags 'not @long'",
+    "test-fast": "cucumber-js --tags 'not @long' && echo \"\nReady to use: http://localhost:8080\"",
     "test-long": "cucumber-js --tags '@long'"
   },
   "devDependencies": {

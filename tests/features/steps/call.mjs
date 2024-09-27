@@ -77,8 +77,8 @@ Then('get call should return accepted response', async function () {
   assert.equal(202, response.status)
 });
 
-When('I make a request to get a sample processed call', async function () {
-  getResponse = await fetch(fullURL(`/api/call/1001`))
+When('I make a request to get the call {int}', async function (callId) {
+  getResponse = await fetch(fullURL(`/api/call/${callId}`))
 });
 
 function ConvertDatatableToCall(datatable) {

@@ -1,7 +1,7 @@
 Feature: Call
 
   Scenario: User get processed call details
-    When I make a request to get a sample processed call
+    When I make a request to get the call 1001
     And  I should receive call processed response:
       | id             | 1001 |
       | text           | Hello and welcome to out call in Kyiv. I am happy to talk about visa and diplomatic inquries! |

@@ -78,7 +78,7 @@ Then('get call should return accepted response', async function () {
 });
 
 When('I make a request to get a sample processed call', async function () {
-  getResponse = await fetch(fullURL(`/api/call/1000`))
+  getResponse = await fetch(fullURL(`/api/call/1001`))
 });
 
 function ConvertDatatableToCall(datatable) {

@@ -25,7 +25,7 @@ EXPOSE 8081
 CMD [ "/app/server", \
       "--host", "0", \
       "--port", "8081", \
-      "--threads", "8", \
+      "--threads", "12", \
       "--convert", \
       "--best-of", "5", \
       "--beam-size", "5", \

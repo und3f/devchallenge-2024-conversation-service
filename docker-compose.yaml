@@ -11,8 +11,8 @@ services:
       default:
         aliases:
           - postgres
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
 
   migrations:
     image: 'liquibase/liquibase'
@@ -28,8 +28,8 @@ services:
     build:
       context: ./services/whisper
     stop_grace_period: 1s
-    ports:
-      - '8081:8081'
+    # ports:
+    #   - '8081:8081'
     volumes:
       - ./contrib/whisper.cpp/models/:/models
     restart: on-failure
@@ -42,8 +42,8 @@ services:
     build:
       context: ./services/nlp
     stop_grace_period: 1s
-    ports:
-      - '8082:8080'
+    # ports:
+    #   - '8082:8080'
     restart: on-failure
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://nlp:8080/health"]

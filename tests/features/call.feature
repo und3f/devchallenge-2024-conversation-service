@@ -23,10 +23,11 @@ Feature: Call
     Then I should receive not found error
 
   @long
-  Scenario: User successfully analyzes call
+  Scenario: User successfully analyzes JFK call
     When I make a request to create a call
       | audio_url | https://github.com/ggerganov/whisper.cpp/raw/refs/heads/master/samples/jfk.wav |
     Then I should receive call created success response
     And  I wait till the call is processed using long poll
-    And  get call should return success response
-
+    And  get call should return success response:
+      | text           | And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. |
+      | emotional_tone | Neutral |

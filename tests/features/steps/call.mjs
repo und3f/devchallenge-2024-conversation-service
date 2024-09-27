@@ -1,6 +1,6 @@
 import { fullURL } from './configuration.js'
 
-import { When, Then, wrapPromiseWithTimeout } from '@cucumber/cucumber'
+import { Given, When, Then, wrapPromiseWithTimeout } from '@cucumber/cucumber'
 import assert from 'assert'
 
 const callRerequestInterval = 1 * 1000
@@ -25,12 +25,21 @@ Then('I should receive call created success response', async function () {
   assert.ok(createdCallId, 'Got created call id')
 });
 
-Then('get call should return success response', async function () {
+Given('I created call with id {int}', function(id) {
+  createdCallId = id
+})
+
+Then('get call should return success response:', async function (datatable) {
+  const expectedCall = ConvertDatatableToCall(datatable)
+
   assert.ok(createdCallId)
   const response = await fetch(fullURL(`/api/call/${createdCallId}`))
   assert.equal(200, response.status)
 
   const call = await response.json()
+  for (const category in expectedCall) {
+    assert.deepEqual(call[category], expectedCall[category])
+  }
 });
 
 const checkCallProcessed = async function (callId, interval) {
@@ -73,7 +82,10 @@ When('I make a request to get a sample processed call', async function () {
 });
 
 function ConvertDatatableToCall(datatable) {
-  const categories = datatable.rows().filter(a => a[0] === 'categories').map(a => a[1])
+  let categories = datatable.rows().filter(a => a[0] === 'categories').map(a => a[1])
+  if (categories.length == 0) {
+    categories = null
+  }
   return {...datatable.rowsHash(), categories}
 }
 

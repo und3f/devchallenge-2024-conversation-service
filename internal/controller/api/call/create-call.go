@@ -42,7 +42,7 @@ func (c *Controller) CreateCall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set(headers.Location, "/api/call"+strconv.Itoa(int(callId)))
+	w.Header().Set(headers.Location, "/api/call/"+strconv.Itoa(int(callId)))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(call)
 }

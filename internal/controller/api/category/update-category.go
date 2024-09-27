@@ -30,8 +30,13 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	category, err := c.dao.UpdateCategory(newCategoryValue)
 	if err != nil {
+		status := http.StatusInternalServerError
+		if isConstraintError(err) {
+			status = http.StatusUnprocessableEntity
+		}
+
 		log.Print(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), status)
 		return
 	}
 

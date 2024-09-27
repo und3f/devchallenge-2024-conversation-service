@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 RUN wget https://github.com/ggerganov/whisper.cpp/archive/69339af2d104802f3f201fd419163defba52890e.tar.gz -O /tmp/whisper.cpp.tar.gz && \
     tar -xvf /tmp/whisper.cpp.tar.gz --strip-components 1 && \
-    make
+    make DEFCC="cc -march=native" DEFCXX="c++ -march=native" server
 
 FROM ubuntu:22.04 AS runtime
 WORKDIR /app

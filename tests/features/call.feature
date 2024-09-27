@@ -1,8 +1,15 @@
 Feature: Call
 
   Scenario: User get processed call details
-    When I make a request to get sample processed call
-    And  I should receive call processed response
+    When I make a request to get a sample processed call
+    And  I should receive call processed response:
+      | id             | 1000 |
+      | text           | Hello and welcome to out call in Kyiv. I am happy to talk about visa and diplomatic inquries! |
+      | name           | Sample Call |
+      | location       | Kyiv |
+      | emotional_tone | Neutral |
+      | categories     | Diplomatic Inquiries |
+      | categories     | Visa and Passport Services |
 
   Scenario: User tries to create a call with invalid audio document
     When I make a request to create a call

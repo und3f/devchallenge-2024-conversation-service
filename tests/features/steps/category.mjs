@@ -4,22 +4,6 @@ import { When, Then } from '@cucumber/cucumber'
 import assert from 'assert'
 import { response as getResponse } from './api-root.mjs'
 
-const sampleCreateCategory = {
-  "title": "Topic Title",
-  "points": [
-    "Key Point 1",
-    "Key Point 2"
-  ]
-}
-
-const sampleUpdateCategory = {
-  "title": "Updated Topic Title",
-  "points": [
-    "Key Point 1 (new)",
-    "Key Point 2"
-  ]
-}
-
 let createResponse, deleteReponse
 let createdCategoryId
 let categories
@@ -31,29 +15,40 @@ function createPostHeaders() {
   return h
 }
 
-When('I make a request to create sample category', async function () {
+function categoryDatatableToHash(datatable) {
+  const points = datatable.rows().filter(a => a[0] === 'points').map(a => a[1])
+  return {...datatable.rowsHash(), points}
+}
+
+When('I make a request to create a category:', async function (datatable) {
   createResponse = await fetch(
     fullURL('/api/category'), {
       'method': 'POST',
       'headers': createPostHeaders(),
-      'body': JSON.stringify(sampleCreateCategory)
+      'body': JSON.stringify(categoryDatatableToHash(datatable))
     }
   )
 });
 
-Then('I should receive category created success response', async function () {
+Then('I should receive category created success response:', async function (datatable) {
   const response = createResponse
 
-  assert.equal(201, response.status)
+  assert.equal(response.status, 201)
 
   const category = await response.json()
   assert.ok(category.id, "Category id exists")
   createdCategoryId = category.id
+
+  assert.deepEqual(category, {id: category.id, ...categoryDatatableToHash(datatable)})
+})
+
+Then('API returns: category create error: unprocessable entity', async function() {
+  assert.equal(createResponse.status, 422)
 })
 
 Then('I should receive list of all conversation topics', async function () {
   const response = getResponse
-  assert.equal(200, response.status)
+  assert.equal(response.status, 200)
 
   categories = await response.json()
   assert.ok(categories.length > 0, 'List is not empty')
@@ -76,7 +71,7 @@ Then('I should see default conversation topics', async function () {
   }
 });
 
-When('I request to delete previously created sample category', async function () {
+When('I request to delete previously created category', async function () {
   deleteReponse = await fetch(
     fullURL(`/api/category/${createdCategoryId}`), {
       'method': 'DELETE',
@@ -92,20 +87,31 @@ Then('category should be unavailable', async function () {
   assert.ok(category == null)
 });
 
-When('I request to update previously created sample category', async function () {
-
+When('I request to update previously created category with:', async function (datatable) {
   const updateResponse = await fetch(
     fullURL(`/api/category/${createdCategoryId}`), {
       'method': 'PUT',
       'headers': createPostHeaders(),
-      'body': JSON.stringify(sampleUpdateCategory)
+      'body': JSON.stringify(categoryDatatableToHash(datatable))
     }
   )
 
   assert.equal(200, updateResponse.status)
 });
 
-Then('category should be updated', async function () {
+When('I request to update previously created category using invalid data:', async function (datatable) {
+  const updateResponse = await fetch(
+    fullURL(`/api/category/${createdCategoryId}`), {
+      'method': 'PUT',
+      'headers': createPostHeaders(),
+      'body': JSON.stringify(categoryDatatableToHash(datatable))
+    }
+  )
+
+  assert.equal(422, updateResponse.status)
+});
+
+Then('category should match:', async function (datatable) {
   const response = await fetch(
     fullURL('/api/category')
   )
@@ -117,8 +123,8 @@ Then('category should be updated', async function () {
 
   assert.ok(category, 'Category found')
 
-  assert.deepEqual({
-    ...sampleUpdateCategory,
+  assert.deepEqual(category, {
+    ...categoryDatatableToHash(datatable),
     id: createdCategoryId,
-  }, category)
+  })
 });

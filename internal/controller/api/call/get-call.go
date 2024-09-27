@@ -2,6 +2,7 @@ package call
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -34,7 +35,7 @@ func (c *Controller) GetCall(w http.ResponseWriter, r *http.Request) {
 
 	call, err := c.dao.GetCall(int32(id))
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}

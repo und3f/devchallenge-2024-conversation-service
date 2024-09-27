@@ -30,7 +30,10 @@ CREATE TABLE category_points (
 
 --changeset V1_Init:createCalls
 CREATE TABLE calls (
-  id              INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id              INT
+                    GENERATED ALWAYS
+                      AS IDENTITY (MINVALUE 1000)
+                    PRIMARY KEY,
 
   processed       BOOLEAN DEFAULT FALSE,
   error           TEXT,

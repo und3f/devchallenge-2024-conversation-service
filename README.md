@@ -12,6 +12,10 @@ docker compose up
 
 ## Tests
 
+BDD tests by feature:
+  * [Category](./tests/features/category.feature)
+  * [Call](./tests/features/call.feature)
+
 The fasts tests are executed on docker compose start.
 
 To execute all integration tests (including long-running tests, requires

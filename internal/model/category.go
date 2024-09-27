@@ -223,16 +223,16 @@ func (d *Dao) UpdateCategory(newCategoryValue Category) (category *Category, err
 		}
 	}
 
-	_, err = tx.Exec(
-		context.Background(),
-		"DELETE FROM category_points WHERE category_id = $1",
-		newCategoryValue.Id,
-	)
-	if err != nil {
-		return
-	}
-
 	if len(newCategoryValue.Points) > 0 {
+		_, err = tx.Exec(
+			context.Background(),
+			"DELETE FROM category_points WHERE category_id = $1",
+			newCategoryValue.Id,
+		)
+		if err != nil {
+			return
+		}
+
 		err = d.BindCategoryPoints(tx, newCategoryValue.Id, newCategoryValue.Points)
 		if err != nil {
 			return

@@ -56,6 +56,11 @@ Due to the limitation of the developer laptop only one concurent analyze is poss
 
 Max allowed file size is 2.6MB.
 
+### Call' categories
+
+Categories of the call are computed during call requests, so categories could
+be updated, and call details would reflect new categories.
+
 ## REST operations
 
 ### /api/category ENDPOINT

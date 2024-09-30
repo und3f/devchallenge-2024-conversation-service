@@ -28,13 +28,13 @@ func New(router *mux.Router, dao *model.Dao, servConf model.ServicesConf) *Servi
 	})
 
 	server := &http.Server{Addr: LISTEN_ADDR, Handler: wrapWithMiddleware(router)}
-	BindQuit(server)
+	quit := BindQuit(server)
 
 	services := services.CreateServicesFacade(servConf)
 	apiRouter := router.PathPrefix("/api").Subrouter()
 
 	category.Mount(apiRouter, dao)
-	call.Mount(apiRouter, dao, services)
+	call.Mount(apiRouter, dao, services, quit)
 
 	return &Service{
 		server,
@@ -45,7 +45,11 @@ func (service *Service) Run() {
 	log.Printf("Starting webserver at %q", LISTEN_ADDR)
 
 	if err := service.server.ListenAndServe(); err != nil {
-		log.Fatalf("Failed to start server: %s", err)
+		if err == http.ErrServerClosed {
+			log.Printf("Graceful shutdown.")
+		} else {
+			log.Fatalf("Failed to start server: %s", err)
+		}
 	}
 }
 

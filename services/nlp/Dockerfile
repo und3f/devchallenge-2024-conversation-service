@@ -11,7 +11,7 @@ RUN ./get-models.py
 
 COPY *.py /usr/src/app/
 
-EXPOSE 8080
+EXPOSE 8082
 
 ENV HF_HUB_OFFLINE=1
 CMD [ "/usr/src/app/server.py" ]

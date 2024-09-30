@@ -11,14 +11,17 @@ type Controller struct {
 	dao         *model.Dao
 	analyzeChan chan AnalyzeTask
 
-	srv services.ServicesFacade
+	srv  services.ServicesFacade
+	quit chan any
 }
 
-func Mount(r *mux.Router, dao *model.Dao, srv services.ServicesFacade) {
+func Mount(r *mux.Router, dao *model.Dao, srv services.ServicesFacade, quit chan any) {
 	c := &Controller{
 		dao:         dao,
 		analyzeChan: make(chan AnalyzeTask, config.CALL_CHAN_SIZE),
-		srv:         srv,
+
+		srv:  srv,
+		quit: quit,
 	}
 
 	go c.Analyzer()

@@ -39,7 +39,7 @@ func (c *Controller) ProcessCall(callId int64, audioUrl string) {
 func (c *Controller) AnalyzeCall(callId int64, audioUrl string) model.Call {
 	call := model.Call{Id: callId, Processed: true}
 
-	audio, err := c.audio.Download(audioUrl)
+	audio, err := c.srv.Audio.Download(audioUrl)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to get audio file: %s", err)
 		call.ProcessError = &errStr
@@ -47,7 +47,7 @@ func (c *Controller) AnalyzeCall(callId int64, audioUrl string) model.Call {
 	}
 
 	log.Printf("  processing call %d: speech recognition...", callId)
-	text, err := c.whisper.RecognizeSpeech(audio)
+	text, err := c.srv.Whisper.RecognizeSpeech(audio)
 	if err != nil {
 		errStr := fmt.Sprintf("Speech recongnition failure: %s", err)
 		call.ProcessError = &errStr
@@ -57,7 +57,7 @@ func (c *Controller) AnalyzeCall(callId int64, audioUrl string) model.Call {
 	call.Text = &text
 
 	log.Printf("  processing call %d: sentiment prediction...", callId)
-	emotional, err := c.nlp.GetSentiment(text)
+	emotional, err := c.srv.NLP.GetSentiment(text)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to analyze emotional tone: %s", err)
 		call.ProcessError = &errStr
@@ -67,7 +67,7 @@ func (c *Controller) AnalyzeCall(callId int64, audioUrl string) model.Call {
 	call.EmotionalTone = &emotional
 
 	log.Printf("  processing call %d: data extraction...", callId)
-	data, err := c.nlp.ExtractData(text)
+	data, err := c.srv.NLP.ExtractData(text)
 	if err != nil {
 		errStr := fmt.Sprintf("Failed to extract data: %s", err)
 		call.ProcessError = &errStr

@@ -29,5 +29,5 @@ Feature: Call
     Then I should receive call created success response
     And  I wait till the call is processed using long poll
     And  get call should return success response:
-      | text           | And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country. |
+      | text           | And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country. |
       | emotional_tone | Neutral |

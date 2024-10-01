@@ -61,17 +61,18 @@ func (d *Dao) GetCallCategories(callId int64) (categories []string, err error) {
 	rows, err := d.pg.Query(
 		context.Background(),
 		`
-SELECT title
-FROM categories
-WHERE id IN (
-	SELECT category_id
-	FROM points
-	JOIN category_points
-		ON points.id = category_points.point_id
-	WHERE
-		(SELECT text FROM calls WHERE id = $1)
-		ILIKE CONCAT('%', CONCAT(points.text, '%')))
-ORDER BY title
+SELECT
+	categories.title
+FROM points
+	LEFT JOIN calls
+		ON calls.text_tsvector @@ points.text_tsquery
+	LEFT JOIN category_points
+		ON category_points.point_id = points.id
+	LEFT JOIN categories
+		ON categories.id = category_points.category_id
+WHERE calls.id = $1
+GROUP BY categories.id
+ORDER BY categories.title
 		`,
 		callId,
 	)

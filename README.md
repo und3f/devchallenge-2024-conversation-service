@@ -60,6 +60,7 @@ Max allowed file size is 2.6MB.
 
 Categories of the call are computed during call requests, so categories could
 be updated, and call details would reflect new categories.
+Postgresql full text search is used to match categories.
 
 ## REST operations
 

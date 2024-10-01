@@ -2,11 +2,15 @@
 
 --changeset V1_Init:createPoints
 CREATE TABLE points (
-  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  text TEXT
-    UNIQUE
-    NOT NULL
-    CONSTRAINT point_text_min_length CHECK (char_length(text) >= 3)
+  id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  text  TEXT
+          UNIQUE
+          NOT NULL
+          CONSTRAINT point_text_min_length CHECK (char_length(text) >= 3),
+    
+  text_tsquery   tsquery
+                    GENERATED ALWAYS
+                      AS (phraseto_tsquery('english', text)) STORED
 );
 
 --changeset V1_Init:createCategories
@@ -41,19 +45,15 @@ CREATE TABLE calls (
   processed       BOOLEAN DEFAULT FALSE,
   error           TEXT,
   text            TEXT,
+  text_tsvector   tsvector
+                    GENERATED ALWAYS
+                      AS (to_tsvector('english', text)) STORED,
 
   name            VARCHAR(255),
   location        VARCHAR(255),
   emotional_tone  VARCHAR(20)
 );
 
---changeset V1_Init:createCallCategories
-CREATE TABLE call_categories (
-  call_id     BIGINT
-    REFERENCES calls(id)
-    ON DELETE CASCADE,
-  category_id BIGINT
-    REFERENCES categories(id)
-    ON DELETE CASCADE
-);
-
+--changeset V1_Init:createCallsFullTextSearchIndex
+CREATE INDEX calls_text_tsvector_idx
+  ON calls USING GIN (text_tsvector);

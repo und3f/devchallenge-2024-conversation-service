@@ -39,7 +39,7 @@ npm run test --prefix tests
 
 ## API Playground with Swagger
 
-Open [./swagger.yaml] in https://editor-next.swagger.io/.
+Open [swagger.yaml](./swagger.yaml) in https://editor-next.swagger.io/.
 
 ## Corner cases
 

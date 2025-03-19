@@ -37,6 +37,9 @@ Also you may execute tests locally by running:
 npm run test --prefix tests
 ```
 
+## Open Swagger
+
+
 ## Corner cases
 
 ### CPU only
@@ -95,13 +98,18 @@ tone of the conversation, and stores the results.
 
 POST /api/call -- Creates a new call based on the provided audio file URL. Supported file formats are wav and mp3.
 
+payload:
+```
+{"audio_url": ""}
+```
+
 GET /api/call/{id} -- Retrieves details of a call by the specified identifier.
 The emotional tone must be one of the following values: Neutral, Positive,
 Negative, Angry.
 
 # Copyright
 
-Copyright (C) 2023-2024 Serhii Zasenko
+Copyright (C) 2023-2025 Serhii Zasenko
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

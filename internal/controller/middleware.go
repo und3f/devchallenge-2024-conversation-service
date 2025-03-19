@@ -8,7 +8,11 @@ import (
 )
 
 func wrapWithMiddleware(router http.Handler) http.Handler {
-	return cors.Default().Handler(withLogging(router))
+	return cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "DELETE"},
+		Debug:          true,
+	}).Handler(withLogging(router))
 }
 
 func withLogging(h http.Handler) http.Handler {

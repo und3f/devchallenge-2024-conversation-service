@@ -1,0 +1,226 @@
+openapi: 3.0.4
+info:
+  title: Swagger Conversation Service - OpenAPI 3.0
+  description: |-
+    Conversation REST service
+  version: 1.0.12
+externalDocs:
+  description: Github
+  url: https://github.com/und3f/devchallenge-2024-conversation-service
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: category
+    description: Conversation Categories
+  - name: call
+    description: Calls Analysis
+paths:
+  /category:
+    get:
+      tags:
+        - category
+      summary: List.
+      description: List categories
+      operationId: listCategories
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - category
+      summary: 
+      description: Creates a new conversation topic.
+      operationId: addCategory
+      requestBody:
+        description: Create a new conversation topic.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /category/{categoryId}:
+    delete:
+      tags:
+        - category
+      summary: Deletes a category.
+      description: Delete a category.
+      operationId: deleteCategory
+      parameters:
+        - name: categoryId
+          in: path
+          description: Category id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Category deleted
+        '404':
+          description: Category not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /call:
+    post:
+      tags:
+        - call
+      summary: 
+      description: Request a call recognition.
+      operationId: addCall
+      requestBody:
+        description: Create a new call recognition.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Call'
+        '400':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /call/{callId}:
+    get:
+      tags:
+        - call
+      summary: Get call by ID.
+      description: Returns Call analysis.
+      operationId: getCallById
+      parameters:
+        - name: callId
+          in: path
+          description: ID of call to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Call'
+        '404':
+          description: Call not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    CallCreateRequest:
+      type: object
+      properties:
+        audio_url:
+          type: string
+          example: https://github.com/ggerganov/whisper.cpp/raw/refs/heads/master/samples/jfk.wav
+    Call:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Call name
+        emotional_tone:
+          type: string
+          example: Neutral
+        categories:
+          type: array
+          items:
+            type: string
+          example: ["Diplomatic Inquiries", "Visa and Passport Services"]
+        location:
+          type: string
+          example: Kyiv
+        text:
+          type: string
+          example: Recognized call text.
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: Consular Assistance
+        points:
+          type: array
+          items:
+            type: string
+          example: ["Apostille", "Passport"]
+    CategoryList:
+      type: array
+      items:
+         $ref: '#/components/schemas/Category'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  requestBodies:
+    Category:
+      description: Category object that needs to be added
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+    Call:
+      description: Call recognition request body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CallCreateRequest'

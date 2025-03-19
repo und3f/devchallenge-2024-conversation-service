@@ -37,8 +37,9 @@ Also you may execute tests locally by running:
 npm run test --prefix tests
 ```
 
-## Open Swagger
+## API Playground with Swagger
 
+Open [./swagger.yaml] in https://editor-next.swagger.io/.
 
 ## Corner cases
 
